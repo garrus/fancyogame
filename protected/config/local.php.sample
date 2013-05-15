@@ -1,0 +1,19 @@
+<?php
+
+// a sample file for setup local config
+
+return array(
+
+    'components' => array(
+    
+    	// use local db setting
+        'db'=>array(
+                'connectionString' => 'mysql:host=localhost;dbname=fancyogame',
+                'emulatePrepare' => true,
+                'username' => 'fancyogame',
+                'password' => '123456',
+                'charset' => 'utf8',
+        )
+    )
+        
+);

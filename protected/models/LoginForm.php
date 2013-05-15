@@ -9,9 +9,8 @@ class LoginForm extends CFormModel
 {
 	public $username;
 	public $password;
-	public $rememberMe;
 
-	private $_identity;
+	private $_account;
 
 	/**
 	 * Declares the validation rules.
@@ -23,8 +22,6 @@ class LoginForm extends CFormModel
 		return array(
 			// username and password are required
 			array('username, password', 'required'),
-			// rememberMe needs to be a boolean
-			array('rememberMe', 'boolean'),
 			// password needs to be authenticated
 			array('password', 'authenticate'),
 		);
@@ -36,7 +33,7 @@ class LoginForm extends CFormModel
 	public function attributeLabels()
 	{
 		return array(
-			'rememberMe'=>'Remember me next time',
+			'username'=>'Login name or email',
 		);
 	}
 
@@ -44,13 +41,23 @@ class LoginForm extends CFormModel
 	 * Authenticates the password.
 	 * This is the 'authenticate' validator as declared in rules().
 	 */
-	public function authenticate($attribute,$params)
+	public function authenticate()
 	{
 		if(!$this->hasErrors())
 		{
-			$this->_identity=new UserIdentity($this->username,$this->password);
-			if(!$this->_identity->authenticate())
+			$password_match = false;
+			$criteria = new CDbCriteria();
+			$criteria->compare('login_name', $this->username, false, 'OR');
+			$criteria->compare('email', $this->username, false, 'OR');
+			$account=Account::model()->find($criteria);
+			if ($account) {
+				$password_match = $account->password == md5($this->password. $account->salt);
+			}
+			
+			if(!$password_match)
 				$this->addError('password','Incorrect username or password.');
+			else
+				$this->_account = $account;
 		}
 	}
 
@@ -60,15 +67,13 @@ class LoginForm extends CFormModel
 	 */
 	public function login()
 	{
-		if($this->_identity===null)
+		if($this->_account===null)
 		{
-			$this->_identity=new UserIdentity($this->username,$this->password);
-			$this->_identity->authenticate();
+			$this->authenticate();
 		}
-		if($this->_identity->errorCode===UserIdentity::ERROR_NONE)
+		if($this->_account)
 		{
-			$duration=$this->rememberMe ? 3600*24*30 : 0; // 30 days
-			Yii::app()->user->login($this->_identity,$duration);
+			Yii::app()->user->login($this->_account);
 			return true;
 		}
 		else

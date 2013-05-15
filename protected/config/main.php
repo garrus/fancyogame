@@ -5,9 +5,9 @@
 
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
-return array(
-	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'My Web Application',
+$config = array(
+	'basePath'=>dirname(__DIR__),
+	'name'=>'Fancy Ogame',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
@@ -16,28 +16,34 @@ return array(
 	'import'=>array(
 		'application.models.*',
 		'application.components.*',
+		'application.exceptions.*',
 	),
+        
+    'aliases' => array(
+        'bootstrap' => 'ext.bootstrap',
+    ),
 
 	'modules'=>array(
 		// uncomment the following to enable the Gii tool
-		/*
 		'gii'=>array(
 			'class'=>'system.gii.GiiModule',
-			'password'=>'Enter Your Password Here',
+			'password'=>false,
 			// If removed, Gii defaults to localhost only. Edit carefully to taste.
 			'ipFilters'=>array('127.0.0.1','::1'),
+		    'generatorPaths' => array(
+		        'bootstrap.gii',
+		    ),
 		),
-		*/
 	),
 
 	// application components
 	'components'=>array(
 		'user'=>array(
+			'class' => 'WebUser',
 			// enable cookie-based authentication
-			'allowAutoLogin'=>true,
+			//'allowAutoLogin'=>true,
 		),
 		// uncomment the following to enable URLs in path-format
-		/*
 		'urlManager'=>array(
 			'urlFormat'=>'path',
 			'rules'=>array(
@@ -46,20 +52,14 @@ return array(
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
 			),
 		),
-		*/
-		'db'=>array(
-			'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
+		'bootstrap'=>array(
+		    'class'=>'bootstrap.components.Bootstrap',
 		),
-		// uncomment the following to use a MySQL database
-		/*
+
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=testdrive',
-			'emulatePrepare' => true,
-			'username' => 'root',
-			'password' => '',
-			'charset' => 'utf8',
+			'connectionString' => 'sqlite:'.dirname(__DIR__).'/data/testdrive.db',
 		),
-		*/
+
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
 			'errorAction'=>'site/error',
@@ -72,11 +72,10 @@ return array(
 					'levels'=>'error, warning',
 				),
 				// uncomment the following to show log messages on web pages
-				/*
 				array(
 					'class'=>'CWebLogRoute',
+					'levels' => 'info',
 				),
-				*/
 			),
 		),
 	),
@@ -88,3 +87,10 @@ return array(
 		'adminEmail'=>'webmaster@example.com',
 	),
 );
+
+// check if there is local config override file
+if (file_exists(__DIR__. DIRECTORY_SEPARATOR. 'local.php')) {
+    return array_replace_recursive($config, require __DIR__. DIRECTORY_SEPARATOR. 'local.php');
+} else {
+    return $config;
+}

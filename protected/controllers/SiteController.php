@@ -27,9 +27,26 @@ class SiteController extends Controller
 	 */
 	public function actionIndex()
 	{
-		// renders the view file 'protected/views/site/index.php'
-		// using the default layout 'protected/views/layouts/main.php'
-		$this->render('index');
+		$model=new LoginForm;
+
+		// if it is ajax validation request
+		if(isset($_POST['ajax']) && $_POST['ajax']==='login-form')
+		{
+			echo CActiveForm::validate($model);
+			Yii::app()->end();
+		}
+
+		// collect user input data
+		if(isset($_POST['LoginForm']))
+		{
+			$model->attributes=$_POST['LoginForm'];
+			// validate user input and redirect to the previous page if valid
+			if($model->validate() && $model->login())
+				$this->redirect(Yii::app()->user->returnUrl);
+		}
+		$this->render('index', array(
+			'model' => $model,	
+		));
 	}
 
 	/**
@@ -72,30 +89,33 @@ class SiteController extends Controller
 		$this->render('contact',array('model'=>$model));
 	}
 
-	/**
-	 * Displays the login page
-	 */
-	public function actionLogin()
-	{
-		$model=new LoginForm;
-
-		// if it is ajax validation request
-		if(isset($_POST['ajax']) && $_POST['ajax']==='login-form')
+	
+	public function actionSignup(){
+		
+		$model = new SignupForm();
+				
+		// Uncomment the following line if AJAX validation is needed
+		if(isset($_POST['ajax']) && $_POST['ajax']==='signup-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
-
-		// collect user input data
-		if(isset($_POST['LoginForm']))
+		
+		if(isset($_POST['SignupForm']))
 		{
-			$model->attributes=$_POST['LoginForm'];
-			// validate user input and redirect to the previous page if valid
-			if($model->validate() && $model->login())
-				$this->redirect(Yii::app()->user->returnUrl);
+			$model->attributes=$_POST['SignupForm'];
+			if($model->validate()){
+				$account = Account::createNew($model->email, $model->login_name, $model->password);
+				Yii::app()->user->login($account);
+				$this->redirect(array('/site/index'));
+			}
 		}
-		// display the login form
-		$this->render('login',array('model'=>$model));
+		
+		$this->render('signup',array(
+				'model'=>$model,
+		));
+		
+		
 	}
 
 	/**
