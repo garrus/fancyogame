@@ -105,7 +105,7 @@ class AppContext extends \CApplicationComponent {
      */
     public function switchPlayer(Player $player){
         
-        if ($this->getWebUser()->geId() == $player->account_id) {
+        if ($this->getWebUser()->getId() == $player->account_id) {
             $this->getSession()->add('current_player', $player->id);
             
             $this->_player = $player;

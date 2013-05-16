@@ -73,15 +73,12 @@ class Player extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'auctions' => array(self::HAS_MANY, 'Auction', 'seller_id'),
-			'auctions1' => array(self::HAS_MANY, 'Auction', 'last_bidding_buyer_id'),
 			'fleets' => array(self::HAS_MANY, 'Fleet', 'owner_id'),
 			'mineBlueprints' => array(self::MANY_MANY, 'MineBlueprint', 'mine_permit(player_id, mine_blueprint_id)'),
 			'planets' => array(self::HAS_MANY, 'Planet', 'owner_id'),
+		    'planetCount' => array(self::STAT, 'Planet', 'owner_id'),
 			'planetMines' => array(self::HAS_MANY, 'PlanetMine', 'owner_id'),
 			'account' => array(self::BELONGS_TO, 'Account', 'account_id'),
-			'relays' => array(self::HAS_MANY, 'Relay', 'discoverer_id'),
-			'relayAccessHistories' => array(self::HAS_MANY, 'RelayAccessHistory', 'player_id'),
 		);
 	}
 

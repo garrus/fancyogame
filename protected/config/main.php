@@ -36,6 +36,8 @@ $config = array(
 		        'bootstrap.gii',
 		    ),
 		),
+	    
+	    'game',
 	),
 
 	// application components
@@ -46,14 +48,12 @@ $config = array(
 			// enable cookie-based authentication
 			//'allowAutoLogin'=>true,
 		),
+		'actx' => array(
+		    'class' => 'application.appcomponents.AppContext',
+		),
 		// uncomment the following to enable URLs in path-format
 		'urlManager'=>array(
 			'urlFormat'=>'path',
-			'rules'=>array(
-				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
-				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
-				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
-			),
 		),
 		'bootstrap'=>array(
 		    'class'=>'bootstrap.components.Bootstrap',

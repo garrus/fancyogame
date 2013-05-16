@@ -118,9 +118,12 @@ class PlayerController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Player');
+	    $model = new Player('search');
+	    $model->account_id = Yii::app()->user->id;
+		
 		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
+			'dataProvider'=>$model->search(),
+		    'currentPlayer' => Yii::app()->actx->player,
 		));
 	}
 

@@ -2,6 +2,38 @@
 
 class SiteController extends Controller
 {
+    
+    /**
+	 * @return array action filters
+	 */
+	public function filters()
+	{
+		return array(
+			'accessControl', // perform access control for CRUD operations
+		);
+	}
+
+	/**
+	 * Specifies the access control rules.
+	 * This method is used by the 'accessControl' filter.
+	 * @return array access control rules
+	 */
+	public function accessRules()
+	{
+		return array(
+			array('allow',
+			    'actions' => array('selectplayer','newplayer'),
+				'users'=>array('@'),
+			),
+		    array('allow',
+		        'actions' => array('index', 'error', 'contact', 'signup', 'logout'),
+		        'users'=>array('*'),
+		    ),
+			array('deny'),
+		);
+	}
+    
+    
 	/**
 	 * Declares class-based actions.
 	 */
@@ -29,7 +61,7 @@ class SiteController extends Controller
 	{
 	    
 	    if (!Yii::app()->user->isGuest) {
-	        $this->redirect(array('player/index'));
+	        $this->redirect(array('site/selectPlayer'));
 	    }
 	    
 		$model=new LoginForm;
@@ -52,6 +84,60 @@ class SiteController extends Controller
 		$this->render('index', array(
 			'model' => $model,	
 		));
+	}
+	
+	/**
+	 * Select a player to enter game
+	 */
+	public function actionSelectPlayer($id=null){
+	    
+	    if ($id) {
+	        if ($id == 'current') {
+	            $player = Yii::app()->actx->player;
+	        } else {
+	            $player = Player::model()->findByPk($id);
+	            if ($player) {
+	                Yii::app()->actx->switchPlayer($player);
+	            }
+	        }
+	        if ($player) {
+	            $this->redirect(array('/game'));
+	        }
+	    }
+
+	    $model = new Player('search');
+	    $model->account_id = Yii::app()->user->id;
+
+	    $this->render('select_player',array(
+	        'dataProvider'=>$model->with('planetCount')->search(),
+	        'currentPlayer' => Yii::app()->actx->player,
+	    ));
+	}
+	
+	public function actionNewPlayer(){
+	    
+	    $model=new Player;
+	    
+	    if(isset($_POST['ajax']) && $_POST['ajax']==='player-form')
+		{
+			echo CActiveForm::validate($model);
+			Yii::app()->end();
+		}
+	    
+	    if(isset($_POST['Player']))
+	    {
+	        $model->attributes=$_POST['Player'];
+	        $model->account_id = Yii::app()->user->id;
+	        if($model->save()){
+	            $this->redirect(array('site/selectplayer','id'=>$model->id));
+	        }
+	    }
+	    
+	    $this->render('new_player',array(
+	        'model'=>$model,
+	    ));
+	    
+	    
 	}
 
 	/**
