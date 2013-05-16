@@ -18,7 +18,7 @@
  * The followings are the available model relations:
  * @property Player[] $players
  */
-class Account extends CActiveRecord implements IUserIdentity
+class Account extends CActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -131,48 +131,7 @@ class Account extends CActiveRecord implements IUserIdentity
 		
 		return $model;
 	}
-	
-	/*
-	 * (non-PHPdoc) @see IUserIdentity::authenticate()
-	 */
-	public function authenticate() {
-		return true;
-	}
-	
-	/*
-	 * (non-PHPdoc) @see IUserIdentity::getIsAuthenticated()
-	 */
-	public function getIsAuthenticated() {
-		return true;
-	}
-	
-	/*
-	 * (non-PHPdoc) @see IUserIdentity::getId()
-	 */
-	public function getId() {
-		return $this->getAttribute('id');
-	}
-	
-	/*
-	 * (non-PHPdoc) @see IUserIdentity::getName()
-	 */
-	public function getName() {
-		return $this->getAttribute('login_name');
-	}
-	
-	/*
-	 * (non-PHPdoc) @see IUserIdentity::getPersistentStates()
-	 */
-	public function getPersistentStates() {
-		if ($this->last_login_time == '0000-00-00 00:00:00') {
-			return array();
-		} else {
-			return array(
-				'last_login_time' => $this->last_login_time,
-				'last_login_ip' => $this->last_login_ip,
-			);
-		}
-	}
+
 	
 	public static function updateLoginRecord($id, $login_ip, $login_time=null) {
 		

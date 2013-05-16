@@ -14,9 +14,11 @@ $config = array(
 
 	// autoloading model and component classes
 	'import'=>array(
-		'application.models.*',
+		'application.models.ar.*',
+	    'application.models.forms.*',
 		'application.components.*',
 		'application.exceptions.*',
+		'application.utils.*',
 	),
         
     'aliases' => array(
@@ -39,7 +41,8 @@ $config = array(
 	// application components
 	'components'=>array(
 		'user'=>array(
-			'class' => 'WebUser',
+			'class' => 'application.appcomponents.WebUser',
+			'loginUrl' => array('site/index'),
 			// enable cookie-based authentication
 			//'allowAutoLogin'=>true,
 		),
