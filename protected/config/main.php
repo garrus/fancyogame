@@ -14,6 +14,7 @@ $config = array(
 
 	// autoloading model and component classes
 	'import'=>array(
+	    'application.models.*',
 		'application.models.ar.*',
 	    'application.models.forms.*',
 		'application.components.*',

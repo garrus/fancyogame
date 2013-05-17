@@ -120,12 +120,12 @@ class Planet extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id,true);
-		$criteria->compare('owner_id',$this->owner_id,true);
+		$criteria->compare('id',$this->id);
+		$criteria->compare('owner_id',$this->owner_id);
 		$criteria->compare('galaxy',$this->galaxy);
 		$criteria->compare('system',$this->system);
 		$criteria->compare('position',$this->position);
-		$criteria->compare('name',$this->name,true);
+		$criteria->compare('name',$this->name);
 		$criteria->compare('temperature',$this->temperature);
 		$criteria->compare('is_colonized',$this->is_colonized);
 		$criteria->compare('has_active_mine',$this->has_active_mine);
@@ -136,5 +136,27 @@ class Planet extends CActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
+	}
+	
+	public function ofSystem($galaxy, $system){
+	    
+	    $this->getDbCriteria()->mergeWith(array(
+	        'condition' => 'galaxy=:galaxy AND system=:system',
+	        'params' => array(
+        	        'galaxy' => $galaxy,
+        	        'system' => $system,
+    	        ),
+	        ));
+	    return $this;
+	}
+	
+	/**
+	 * Return location in format of [galaxy, system, position]
+	 * 
+	 * @return string
+	 */
+	public function formatLocation(){
+	    
+	    return sprintf('[%d, %d, %d]', $this->galaxy, $this->system, $this->position);
 	}
 }

@@ -101,6 +101,9 @@ class SiteController extends Controller
 	            }
 	        }
 	        if ($player) {
+	            if (!Planet::model()->exists('owner_id=:owner_id', array('owner_id' => $player->id))) {
+	                PlanetHelper::createMotherPlanet($player);
+	            }
 	            $this->redirect(array('/game'));
 	        }
 	    }

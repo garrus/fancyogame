@@ -88,7 +88,7 @@ class AppContext extends \CApplicationComponent {
      */
     public function switchPlanet(Planet $planet){
         
-        if ($this->getSession()->get('current_player') == $planet->player_id) {
+        if ($this->getSession()->get('current_player') == $planet->owner_id) {
             $this->getSession()->add('current_planet', $planet->id);
             
             $this->_planet = $planet;

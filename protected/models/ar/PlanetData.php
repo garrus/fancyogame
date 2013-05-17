@@ -44,7 +44,7 @@ class PlanetData extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('planet_id, resources, buildings, ships, mines, building_queue, shipyard_queue', 'required'),
+			array('planet_id', 'required'),
 			array('planet_id', 'length', 'max'=>10),
 			array('last_update_time', 'safe'),
 			// The following rule is used by search().
@@ -106,4 +106,65 @@ class PlanetData extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+	
+	public function beforeSave(){
+
+	    if ($this->isNewRecord) {
+	        $this->resources || $this->resources = '{}';
+	        $this->buildings || $this->buildings = '{}';
+	        $this->ships || $this->ships = '{}';
+	        $this->building_queue || $this->building_queue = '{}';
+	        $this->shipyard_queue || $this->shipyard_queue = '{}';
+	        $this->mines || $this->mines = '{}';
+	    }
+	    
+	    return parent::beforeSave();
+	}
+	
+	private $_res=null;
+	
+	/**
+	 * 
+	 * @return Resources
+	 */
+	public function getResources(){
+	    
+	    if (!$this->_res) {
+	        
+	        if ($this->resources) {
+	            $res = $this->_res = Resources::fromJson($this->resource);
+	        } else {
+	            $res = $this->_res = new Resources;
+	            $this->resources = json_encode($res);
+	        }
+	        $res->onChange = array($this, 'onResourcesChange');
+	    }
+	   return $this->_res;
+	}
+	
+	/**
+	 * 
+	 * @param CEvent $event
+	 */
+	public function onResourcesChange($event){
+	    
+	    $this->setResources($event->sender);
+	    
+	}
+	
+	/**
+	 * 
+	 * @param Resources $res
+	 */
+	public function setResources($res){
+	    
+	    $this->_res = $res;
+	    $this->resources = json_encode($res);
+	    if (!$this->isNewRecord) {
+	        if (!$this->save(true, array('resources'))) {
+	            throw new ModelError($this);
+	        }
+	    }
+	}
+
 }
