@@ -1,5 +1,6 @@
 <?php
-class Resources extends Collection {
+
+class Ships extends \Collection {
 
     /**
      * (non-PHPdoc)
@@ -7,7 +8,12 @@ class Resources extends Collection {
      */
     public function attributeNames(){
 
-        return array('metal', 'crystal', 'gas', 'energy');
+        return array(
+
+
+
+
+            );
     }
 
 }
