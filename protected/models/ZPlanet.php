@@ -76,6 +76,9 @@ class ZPlanet extends \Planet {
 
         return $this->owner->getTechs();
     }
+    
+    private $_taskQueue;
+    private $_workflow;
 
     /**
      *
@@ -83,23 +86,59 @@ class ZPlanet extends \Planet {
      */
     public function getTaskQueue(){
 
-        $taskQueue = new TaskQueue;
-        foreach ($this->tasks as $task) {
-            $taskQueue->enqueue($task);
-        }
-        $taskQueue->setLimit($this->getTechs()->getPendingTaskLimit());
-        return $taskQueue;
+    	if (!$this->_taskQueue) {
+	        $taskQueue = new TaskQueue($this->tasks, $this->planetData->last_update_time);
+
+	        $taskQueue->setLimit($this->getTechs()->getPendingTaskLimit());
+	        return $this->_taskQueue = $taskQueue;
+    	}
+    	return $this->_taskQueue;
+    }
+    
+
+    /**
+     * Constructor
+     *
+     * @param int $type
+     * @param string $target
+     * @param int $amount
+     * @throws InvalidArgumentException
+     */
+    public function addNewTask($type, $target, $amount=1){
+    
+    	$workflow = $this->getWorkflow();
+    	if ($workflow->isRunning()) {
+    		$workflow->run();
+    	}
+    	
+    	$taskQueue = $this->getTaskQueue();
+    	if ($taskQueue->isFull()) {
+    		throw new CException('The task queue\'s length has reached its limit.');
+    	}
+    	$task = Task::createNew($this->_planet, $type, $target, $amount=1);
+    	$taskQueue->enqueue($task);
+    
+    	$workflow->run();
     }
 
 
     /**
-     *
      * @return Workflow
      */
     public function getWorkflow(){
 
-        return new Workflow($this);
+    	if (!$this->_workflow) {
+	    	$workflow = new Workflow($this->getTaskQueue());
+	    	$workflow->onBeforeActivateTask = array($this, 'taskStageChange');
+	    	$workflow->onTaskActivated = array($this, 'taskStageChange');
+	    	$workflow->onTaskFinished = array($this, 'taskStageChange');
+	    	
+	    	return $this->_workflow = $workflow;
+    	}
+    	return $this->_workflow;
     }
+    
+    
 
 
     /**
@@ -153,25 +192,6 @@ class ZPlanet extends \Planet {
             $trans->commit();
             return true;
         }
-    }
-
-
-    /**
-     *
-     * @param Task $task
-     */
-    public function validateTaskRequirement($task){
-
-        $trans = self::getDbConnection()->beginTransaction();
-        try {
-            $this->createTaskExecutorChain($task)->simulate(true)->run();
-            $trans->rollback();
-        } catch (Exception $e) {
-            $trans->rollback();
-            throw $e;
-        }
-
-        return $task->hasErrors('requirement');
     }
 
 }

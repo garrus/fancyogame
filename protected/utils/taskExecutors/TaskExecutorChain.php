@@ -51,17 +51,12 @@ class TaskExecutorChain extends \CTypedList {
         $this->simulate = (boolean) $flag;
         return $this;
     }
-
-    /**
-     *
-     */
+    
     public function run() {
 
         if ($this->offsetExists($this->executorIndex)) {
             $executor = $this->itemAt($this->executorIndex++);
             $executor->execute($this);
-        } else {
-            $this->controller->runAction($this->action);
         }
     }
 

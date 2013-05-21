@@ -24,13 +24,10 @@ class Workflow extends CComponent {
      *
      * @param ZPlanet $planet
      */
-    public function __construct(ZPlanet $planet){
+    public function __construct(TaskQueue $taskQueue){
 
-        $this->_planet = $planet;
-        $this->_taskQueue = $planet->getTaskQueue();
-
-        $this->onTaskActivated = array($planet, 'taskStageChange');
-        $this->onTaskFinished = array($planet, 'taskStageChange');
+        $this->_taskQueue = $taskQueue;
+        $this->onCompleteTask = array($taskQueue, 'taskComplete');
     }
 
     /**
@@ -63,28 +60,6 @@ class Workflow extends CComponent {
         return !$this->_taskQueue->isEmpty();
     }
 
-    /**
-     * Constructor
-     *
-     * @param int $type
-     * @param string $target
-     * @param int $amount
-     * @throws InvalidArgumentException
-     */
-    public function addNewTask($type, $target, $amount=1){
-
-        if ($this->isRunning()) {
-            $this->run();
-        }
-
-        if ($this->_taskQueue->isFull()) {
-            throw new CException('The task queue\'s length has reached its limit.');
-        }
-        $task = Task::createNew($this->_planet, $type, $target, $amount=1);
-        $this->_taskQueue->enqueue($task);
-
-        $this->hasFreeWorkingUnit() && $this->run();
-    }
 
     /**
      * Run!
@@ -98,7 +73,7 @@ class Workflow extends CComponent {
 
         // push task
         $now = new DateTime;
-        $nextTaskTime = $this->_planet->getLastUpdateTime();
+        $nextTaskTime = $this->_taskQueue->getLastRunTime();
 
         while(true) {
 
@@ -130,7 +105,7 @@ class Workflow extends CComponent {
             }
 
             if ($nextTaskTime <= $now && $nextFinishedTask) {
-                $this->onTaskFinished($nextFinishedTask);
+                $this->onCompleteTask($nextFinishedTask);
                 unset($this->_runningTasks[$index]);
             } else {
                 // no more task can be executed, so no more working unit can be released
@@ -158,7 +133,8 @@ class Workflow extends CComponent {
 
     private function activateTask(Task $task, DateTime $activateTime){
 
-        if ($this->_planet->validateTaskRequirement($task)) {
+    	if ($this->beforeActivateTask($task)) {
+    	
             foreach ($this->_runningTasks as $running_task) {
                 if ($task->hasConflictWith($running_task)) {
                     // this task has conflict with one running task.
@@ -170,27 +146,41 @@ class Workflow extends CComponent {
 
             $task->is_running = 1;
             $task->activate_time = $activateTime->format('Y-m-d H:i:s');
-            $this->onTaskActivated(new CEvent($this, $task));
+            $this->onActivateTask(new CEvent($this, $task));
             if (!$task->save()) {
                 throw new ModelError($task);
             }
             return true;
-        } else {
+    	}
+    	
+	    if ($task->hasErrors()) {
             Yii::log('Task aborted. '. Utils::modelError($task));
             $task->delete();
-            return false;
         }
+        return false;
+    }
+    
+    protected function beforeActivateTask(Task $task){
+    	
+    	$this->onBeforeActivateTask($task);
+    	return !$task->hasErrors();
+    }
+    
+    public function onBeforeActivateTask(Task $task){
+
+    	$task->setScenario('checkrequirement');
+    	$this->raiseEvent(new CEvent($this, $task));
     }
 
-    public function onTaskActivated(Task $task){
+    public function onActivateTask(Task $task){
 
-        $task->setScenario('activated');
+        $task->setScenario('activate');
         $this->raiseEvent(new CEvent($this, $task));
     }
 
-    public function onTaskFinished(Task $task){
+    public function onCompleteTask(Task $task){
 
-        $task->setScenario('finished');
+        $task->setScenario('complete');
         $this->raiseEvent(new CEvent($this, $task));
     }
 

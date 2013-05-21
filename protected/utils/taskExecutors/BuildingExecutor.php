@@ -8,19 +8,23 @@ class BuildingExecutor extends \TaskExecutor {
     public function execute($chain) {
 
         $task = $chain->task;
-        if ($task->type == Task::TYPE_CONSTRUCT || $task->type == Task::TYPE_DECONSTRUCT) {
+        if ($task->getType() == Task::TYPE_CONSTRUCT || $task->getType() == Task::TYPE_DECONSTRUCT) {
 
-            if ($task->scenario == 'finished') {
-                $chain->planet->buildings->modify($task->target, $task->type == Task::TYPE_CONSTRUCT ? 1 : -1);
-            } else {
-                // activate / check requirement
-                if ($task->type == Task::TYPE_CONSTRUCT
-                    && $error = TechTree::checkRequirement($task->name, $chain->planet->buildings, $chain->planet->techs)
-                    ) {
-                    $task->addError('requirement', $error);
-                    return;
-                }
-            }
+        	switch ($task->scenario) {
+        		case 'checkrequirement':
+        			if ($task->getType() == Task::TYPE_CONSTRUCT) {
+        				$error = TechTree::checkRequirement($task->getObject(), $chain->planet->buildings, $chain->planet->techs);
+        				if ($error) {
+        					$task->addError('requirement', $error);
+        					return;
+        				}
+        			}
+        		case 'complete':
+        			$chain->planet->buildings->modify($task->getObject(), $task->getType() == Task::TYPE_CONSTRUCT ? 1 : -1);
+        			break;
+        		default:
+        			break;
+        	}
         }
 
         $chain->run();

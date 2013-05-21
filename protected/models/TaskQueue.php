@@ -8,6 +8,25 @@ class TaskQueue extends SplQueue {
      * @var int
      */
     private $_limit = -1;
+    
+    /**
+     * 
+     * @var DateTime
+     */
+    private $_lastRunTime;
+    
+    public function __construct(array $tasks, DateTime $lastRunTime){
+    	
+    	foreach ($tasks as $task) {
+    		$this->enqueue($task);
+    	}
+    	$this->_lastRunTime = $lastRunTime;
+    }
+    
+    public function getLastRunTime(){
+    	
+    	return $this->_lastRunTime;
+    }
 
     /**
      * Set task limit
@@ -49,6 +68,15 @@ class TaskQueue extends SplQueue {
         } else {
             throw new InvalidArgumentException('Expecting parameter 1 to be a WorkflowTask, '. gettype($value). ' given.');
         }
+    }
+    
+    /**
+     * 
+     * @param CEvent $event
+     */
+    public function taskComplete($event){
+    	
+    	$this->_lastRunTime = $event->params->getEndTime();
     }
 
 }

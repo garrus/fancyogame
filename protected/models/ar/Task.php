@@ -17,7 +17,7 @@
  * The followings are the available model relations:
  * @property Planet $planet
  */
-class Task extends CActiveRecord
+class Task extends CActiveRecord implements ITask
 {
 
     const TYPE_RESEARCH = 1;
@@ -192,4 +192,39 @@ class Task extends CActiveRecord
 	    return ($this->type == self::TYPE_CONSTRUCT && $task->type == self::TYPE_DECONSTRUCT)
 	        || ($this->type == self::TYPE_DECONSTRUCT && $task->type == self::TYPE_CONSTRUCT);
 	}
+
+
+	/**
+	 * (non-PHPdoc)
+	 * 
+	 * @see ITask::getType()
+	 */
+	public function getType(){
+		
+		return (int)$this->type;
+	}
+
+
+	/**
+	 * (non-PHPdoc)
+	 * 
+	 * @see ITask::getObject()
+	 */
+	public function getObject(){
+		
+		return $this->target;
+	}
+
+
+	/**
+	 * (non-PHPdoc)
+	 * 
+	 * @see ITask::getAmount()
+	 */
+	public function getAmount(){
+		
+		return round($this->amount);
+	}
+
+
 }
