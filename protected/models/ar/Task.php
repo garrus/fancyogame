@@ -159,6 +159,11 @@ class Task extends CActiveRecord implements ITask
 	}
 
 
+	/**
+	 * Return if this task is activated
+	 * 
+	 * @return boolean
+	 */
 	public function isActivated(){
 
 	    return $this->is_running == 1;
@@ -226,5 +231,14 @@ class Task extends CActiveRecord implements ITask
 		return round($this->amount);
 	}
 
+	/**
+	 * Return the end time as DateTime
+	 * 
+	 * @return DateTime
+	 */
+	public function getEndTime(){
+	    
+	    return new DateTime($this->end_time);
+	}
 
 }

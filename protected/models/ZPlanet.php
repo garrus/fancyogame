@@ -128,7 +128,7 @@ class ZPlanet extends \Planet {
     public function getWorkflow(){
 
     	if (!$this->_workflow) {
-	    	$workflow = new Workflow($this->getTaskQueue());
+	    	$workflow = new Workflow($this->taskQueue, $this->techs->getMaxWorkingUnit());
 	    	$workflow->onBeforeActivateTask = array($this, 'taskStageChange');
 	    	$workflow->onTaskActivated = array($this, 'taskStageChange');
 	    	$workflow->onTaskFinished = array($this, 'taskStageChange');

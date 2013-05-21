@@ -15,18 +15,19 @@ class Workflow extends CComponent {
 
     /**
      *
-     * @var ZPlanet
+     * @var int
      */
-    private $_planet;
+    private $_maxWorkingUnit=3;
 
 
     /**
      *
      * @param ZPlanet $planet
      */
-    public function __construct(TaskQueue $taskQueue){
+    public function __construct(TaskQueue $taskQueue, $maxWorkingUnit=3){
 
         $this->_taskQueue = $taskQueue;
+        $this->_maxWorkingUnit = $maxWorkingUnit;
         $this->onCompleteTask = array($taskQueue, 'taskComplete');
     }
 
@@ -47,7 +48,7 @@ class Workflow extends CComponent {
      */
     private function hasFreeWorkingUnit(){
 
-        return count($this->_runningTasks) < $this->_techs->getMaxParallelTask();
+        return count($this->_runningTasks) < $this->_maxWorkingUnit;
     }
 
     /**
@@ -68,6 +69,7 @@ class Workflow extends CComponent {
     public function run(){
 
         if (empty($this->_runningTasks) && !$this->hasWork()) {
+            // no running task, and no pending task
             return;
         }
 
@@ -75,7 +77,7 @@ class Workflow extends CComponent {
         $now = new DateTime;
         $nextTaskTime = $this->_taskQueue->getLastRunTime();
 
-        while(true) {
+        while (true) {
 
             // in every working loop, at most one task can be executed.
             // this task is the one that has the earliest end time among
@@ -83,12 +85,10 @@ class Workflow extends CComponent {
 
             // at the beginning, we'll send in tasks until there is no more
             // free working unit.
-            while($this->hasFreeWorkingUnit()){
-                if ($this->hasWork()) {
-                    // task will be activated and plant into working unit.
-                    // if it cannot be activated, it will be dropped.
-                    $this->sendInTask($nextTaskTime);
-                }
+            while ($this->hasFreeWorkingUnit() && $this->hasWork()) {
+                // task will be activated and plant into working unit.
+                // if it cannot be activated, it will be dropped.
+                $this->sendInTask($nextTaskTime);
             }
 
             // now let's find the earliest finished task
