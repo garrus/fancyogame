@@ -72,11 +72,11 @@ class TaskQueue extends SplQueue {
     
     /**
      * 
-     * @param CEvent $event
+     * @param WorkflowTaskEvent $event
      */
     public function taskComplete($event){
     	
-    	$this->_lastRunTime = $event->params->getEndTime();
+    	$this->_lastRunTime = $event->datetime;
     }
 
 }

@@ -146,7 +146,7 @@ class Workflow extends CComponent {
 
             $task->is_running = 1;
             $task->activate_time = $activateTime->format('Y-m-d H:i:s');
-            $this->onActivateTask(new CEvent($this, $task));
+            $this->onActivateTask($task, $activateTime);
             if (!$task->save()) {
                 throw new ModelError($task);
             }
@@ -166,23 +166,70 @@ class Workflow extends CComponent {
     	return !$task->hasErrors();
     }
     
-    public function onBeforeActivateTask(Task $task){
+    public function onBeforeActivateTask(Task $task, DateTime $dateTime){
 
     	$task->setScenario('checkrequirement');
-    	$this->raiseEvent(new CEvent($this, $task));
+    	$this->raiseEvent('onBeforeActivateTask', new WorkflowTaskEvent($this, $task, $dateTime));
     }
 
-    public function onActivateTask(Task $task){
+    public function onActivateTask(Task $task, DateTime $dateTime){
 
         $task->setScenario('activate');
-        $this->raiseEvent(new CEvent($this, $task));
+    	$this->raiseEvent('onActivateTask', new WorkflowTaskEvent($this, $task, $dateTime));
     }
 
-    public function onCompleteTask(Task $task){
+    public function onCompleteTask(Task $task, DateTime $dateTime){
 
         $task->setScenario('complete');
-        $this->raiseEvent(new CEvent($this, $task));
+    	$this->raiseEvent('onCompleteTask', new WorkflowTaskEvent($this, $task, $dateTime));
+    }
+
+}
+
+/**
+ * 
+ * @property Workflow $sender
+ * @property Task $task
+ * @property DateTime $datetime
+ * 
+ * @author yaowenh
+ */
+class WorkflowTaskEvent extends CEvent{
+    
+    /**
+     * Constructor
+     * 
+     * @param Workflow $sender
+     * @param Task $task
+     * @param DateTime $dateTime
+     */
+    public function __construct(Workflow $sender, Task $task, DateTime $dateTime){
+        
+        parent::__construct($sender, array(
+            'task' => $task,
+            'datetime' => $dateTime,
+        ));
     }
 
 
+    /**
+     *
+     * @return Task
+     */
+    public function getTask(){
+
+        return $this->params['task'];
+    }
+
+
+    /**
+     *
+     * @return DateTime
+     */
+    public function getDateTime(){
+
+        return $this->params['datetime'];
+    }
+    
 }
+

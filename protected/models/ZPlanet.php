@@ -2,7 +2,6 @@
 /**
  *
  *
- *
  * @property Resources $resources
  * @property Techs $techs
  * @property Buildings $buildings
@@ -14,6 +13,19 @@
  *
  */
 class ZPlanet extends \Planet {
+    
+
+    /**
+     * 
+     * @var TaskQueue
+     */
+    private $_taskQueue;
+    
+    /**
+     * 
+     * @var Workflow
+     */
+    private $_workflow;
 
 
     public static function model($className=__CLASS__) {
@@ -37,7 +49,7 @@ class ZPlanet extends \Planet {
      */
     public function getResources(){
 
-        return $this->planetData->getResources();
+        return $this->planetData->getCollection('resources');
     }
 
 
@@ -47,7 +59,7 @@ class ZPlanet extends \Planet {
      */
     public function getShips(){
 
-        return $this->planetData->getShips();
+        return $this->planetData->getCollection('ships');
     }
 
     /**
@@ -56,7 +68,7 @@ class ZPlanet extends \Planet {
      */
     public function getDefences(){
 
-        return $this->planetData->getDefences();
+        return $this->planetData->getCollection('defences');
     }
 
     /**
@@ -65,7 +77,16 @@ class ZPlanet extends \Planet {
      */
     public function getBuildings(){
 
-        return $this->planetData->getBuildings();
+        return $this->planetData->getCollection('buildings');
+    }
+    
+    /**
+     * 
+     * @return Mines
+     */
+    public function getMines(){
+        
+        return $this->planetData->getMines();
     }
 
     /**
@@ -76,9 +97,7 @@ class ZPlanet extends \Planet {
 
         return $this->owner->getTechs();
     }
-    
-    private $_taskQueue;
-    private $_workflow;
+
 
     /**
      *
@@ -138,9 +157,6 @@ class ZPlanet extends \Planet {
     	return $this->_workflow;
     }
     
-    
-
-
     /**
      *
      * @param Task $task
@@ -174,23 +190,95 @@ class ZPlanet extends \Planet {
 
     /**
      *
-     * @param CEvent $event
+     * @param WorkflowTaskEvent $event
      */
     public function taskStageChange($event){
 
+        $this->updateResources($event->datetime);
+        
+        $task = $event->task;
         $trans = self::getDbConnection()->beginTransaction();
         try {
-            $this->createTaskExecutorChain($event->params)->run();
+            $this->createTaskExecutorChain($task)->run();
         } catch (Exception $e) {
             $trans->rollback();
             throw $e;
         }
-        if ($event->params->hasErrors()) {
+        if ($task->hasErrors()) {
             $trans->rollback();
             return false;
         } else {
             $trans->commit();
             return true;
+        }
+    }
+    
+    /**
+     * 
+     * (non-PHPdoc)
+     * @see CActiveRecord::update()
+     */
+    public function update(){
+        
+        //TODO take flees event into consideration
+        // solution: pass in a date time
+        
+        $this->getWorkflow()->run();
+    }
+    
+    /**
+     * Update the resources of this planet to given time
+     * 
+     * @param DateTime $tillTime
+     */
+    protected function updateRecources($tillTime) {
+        
+        $last_update_time = Utils::ensureDateTime($this->planetData->last_update_time);
+        if ($tillTime > $last_update_time) {
+        
+            $lastUpdateTime = clone $last_update_time;
+            
+            
+            $resources = $this->resources;
+            $buildings = $this->buildings;
+            $energy_costs = $buildings->getEnergyCostPerHour(true);
+            $energy_produce = $buildings->energyPerHour * $this->techs->energy_tech * 1.1;
+            
+            $prods = $buildings->productionPerHour;
+            
+            if ($prods['metal'] + $prods['crystal'] > $this->mine_limit * 1000) {
+                $defactor = $this->mine_limit * 1000 / $prods['metal'] + $prods['crystal'];
+                $prods['metal'] *= $defactor;
+                $prods['crystal'] *= $defactor;
+                $energy_costs['metal_refinery'] *= $defactor;
+                $energy_costs['crystal_factory'] *= $defactor;
+            }
+            
+            if ($prods['gas'] > $this->gas_production_rate * 1000) {
+                $defactor = $this->gas_production_rate * 1000 / $prods['gas'];
+                $prods['gas'] *= $defactor;
+                $energy_costs['gas'] *= $defactor;
+            }
+            
+            $hours = Utils::getHours($lastUpdateTime->diff($tillTime));
+            $energy_diff = $hours * ($energy_produce - array_sum($energy_costs));
+            if ($energy_diff < 0 && $energy_diff + $resources->energy < 0) {
+                $hours *= $resources->energy / (-$energy_diff);
+                $energy_diff = -$resources->energy;
+            } elseif ($energy_diff > 0 && $energy_diff + $resources->energy < $buildings->getEnergyCapacity()){
+                $energy_diff = $buildings->getEnergyCapacity() - $resources->energy;
+            }
+            // TODO take energy override tech into consideration
+            
+            $res_diff = array_map(function($rate) use($hours){
+                return $rate * $hours;
+            }, $prods);
+            $res_diff['energy'] = $energy_diff;
+            
+            $this->planetData->last_update_time = $tillTime->format('Y-m-d H:i:s');
+            if (false == $resources->modify($res_diff)) {
+                throw new ModelError($resources);
+            }
         }
     }
 

@@ -121,50 +121,67 @@ class PlanetData extends CActiveRecord
 	    return parent::beforeSave();
 	}
 	
-	private $_res=null;
+	private $_resources=null;
+	private $_buildings=null;
+	private $_ships=null;
+	private $_defences=null;
+	private $_mines=null;
+	
 	
 	/**
-	 * 
-	 * @return Resources
+	 * @param Collection $name
 	 */
-	public function getResources(){
+	private function getCollection($name){
 	    
-	    if (!$this->_res) {
+	    $_cache = '_'. $name;
+	    if (!$this->$_cache) {
+	        $classname = ucfirst($name);
 	        
-	        if ($this->resources) {
-	            $res = $this->_res = Resources::fromJson($this->resource);
+	        if ($this->$name) {
+	            $obj = $this->$_cache = $classname::fromJson($this->$name);
 	        } else {
-	            $res = $this->_res = new Resources;
-	            $this->resources = json_encode($res);
+	            $obj = $this->$_cache = new $classname;
+	            $this->$name = json_encode($obj);
 	        }
-	        $res->onChange = array($this, 'onResourcesChange');
+	        $obj->onChange = array($this, 'onCollectionChange');
 	    }
-	   return $this->_res;
+	    return $this->$_cache;
+	}
+	
+	/**
+	 *
+	 * @param Collection $res
+	 */
+	public function setCollection($obj){
+
+	    $name = strtolower(get_class($obj));
+	    $this->{'_'. $name} = $obj;
+	    $this->$name = json_encode($obj);
+	    if (!$this->isNewRecord) {
+	        if (!$this->save(true, array($name))) {
+	            throw new ModelError($this);
+	        }
+	    }
 	}
 	
 	/**
 	 * 
 	 * @param CEvent $event
 	 */
-	public function onResourcesChange($event){
+	public function onCollectionChange($event){
 	    
-	    $this->setResources($event->sender);
-	    
+	    $this->setCollection($event->sender);
 	}
 	
 	/**
 	 * 
-	 * @param Resources $res
+	 * @return Mines
 	 */
-	public function setResources($res){
+	public function getMines(){
 	    
-	    $this->_res = $res;
-	    $this->resources = json_encode($res);
-	    if (!$this->isNewRecord) {
-	        if (!$this->save(true, array('resources'))) {
-	            throw new ModelError($this);
-	        }
-	    }
+	    return new Mines($this->mines);
 	}
+	
+
 
 }
