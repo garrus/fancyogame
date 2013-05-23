@@ -51,7 +51,12 @@ class TaskExecutorChain extends \CTypedList {
         $this->simulate = (boolean) $flag;
         return $this;
     }
-    
+
+    public function setTask(Task $task){
+        $this->task = $task;
+        $this->executorIndex = 0;
+    }
+
     public function run() {
 
         if ($this->offsetExists($this->executorIndex)) {

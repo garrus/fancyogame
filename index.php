@@ -1,5 +1,7 @@
 <?php
 
+set_time_limit(3);
+
 // change the following paths if necessary
 $yii='C:\local\yii\framework\yii.php';
 $config=dirname(__FILE__).'/protected/config/main.php';

@@ -9,6 +9,7 @@ class ShipExecutor extends \TaskExecutor {
     public function execute($chain) {
 
         $task = $chain->task;
+
         if ($task->getType() == Task::TYPE_BUILD_SHIPS) {
 
         	switch ($task->scenario) {
@@ -17,6 +18,8 @@ class ShipExecutor extends \TaskExecutor {
         				$task->addError('requirement', $error);
         				return;
         			}
+        			break;
+
         		case 'complete':
         			$chain->planet->ships->modify($task->getObject(), $task->getAmount());
         			break;

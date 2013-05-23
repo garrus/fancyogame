@@ -9,6 +9,7 @@ class DefenceExecutor extends \TaskExecutor {
     public function execute($chain) {
 
         $task = $chain->task;
+
         if ($task->getType() == Task::TYPE_BUILD_DEFENCES) {
 
         	switch ($task->scenario) {
@@ -17,6 +18,7 @@ class DefenceExecutor extends \TaskExecutor {
 	                    $task->addError('requirement', $error);
 	                    return;
 	                }
+	                break;
         		case 'complete':
         			$chain->planet->defences->modify($task->getObject(), $task->getAmount());
         			break;

@@ -9,8 +9,8 @@
 	<title><?php echo CHtml::encode($this->pageTitle); ?></title>
 </head>
 
-<body style="background-color: black; color: #ccc;">
-<?php 
+<body style="background-color: black; color: #ccc; padding-top: 50px;">
+<?php
 $planet_items = array();
 $current_planet = Yii::app()->actx->getPlanet();
 if ($current_planet) {

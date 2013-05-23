@@ -127,4 +127,13 @@ class Player extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+	/**
+	 *
+	 * @return Techs
+	 */
+	public function getTechs(){
+
+	    return new Techs;
+	}
 }

@@ -21,7 +21,7 @@ $config = array(
 		'application.exceptions.*',
 		'application.utils.*',
 	),
-        
+
     'aliases' => array(
         'bootstrap' => 'ext.bootstrap',
     ),
@@ -37,7 +37,7 @@ $config = array(
 		        'bootstrap.gii',
 		    ),
 		),
-	    
+
 	    'game',
 	),
 
@@ -67,6 +67,7 @@ $config = array(
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
 			'errorAction'=>'site/error',
+			'discardOutput' => false,
 		),
 		'log'=>array(
 			'class'=>'CLogRouter',

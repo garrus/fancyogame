@@ -99,4 +99,10 @@ class Buildings extends \Collection {
         return round(10000 + 5000 * Calculator::level_pow($this->lab, 1.05));
     }
 
+
+    public function getEnergyCapacity(){
+
+        return 20000 * $this->solar_plant;
+    }
+
 }

@@ -3,7 +3,7 @@
 
 /**
  * This executor will handle effects on Resource
- * 
+ *
  * @author user
  */
 class ResourceExecutor extends TaskExecutor {
@@ -11,66 +11,66 @@ class ResourceExecutor extends TaskExecutor {
 
 	/**
 	 * (non-PHPdoc)
-	 * 
+	 *
 	 * @see TaskExecutor::execute()
 	 */
 	public function execute($chain){
 
 		$task = $chain->task;
-		if ($task->scenario != 'finished') {
-			
-			$planet = $chain->planet;
-			$resource = $planet->resources;
-			switch ($task->scenario) {
-				
-				case 'checkrequirement':
-					$resource = Utils::cleanClone($planet->resources);
-					$consumed_resource = $this->getTaskConsume($task, $planet);
-					if (!$resource->sub($consumed_resource)) {
-						$task->addError('requirement', Utils::modelError($resource));
-						return;
-					}
-					break;
-				
-				case 'activate':
-					$consumed_resource = $this->getTaskConsume($task, $planet);
-					if (!$resource->sub($consumed_resource)) {
-						$task->addError('requirement', Utils::modelError($resource));
-						return;
-					}
-					$task->end_time = $this->getTaskEndTime($task, $planet);
-					break;
-				
-				default:
-					break;
-			}
+		$planet = $chain->planet;
+		$resource = $planet->resources;
+
+		switch ($task->scenario) {
+
+			case 'checkrequirement':
+				$resource = Utils::cleanClone($planet->resources);
+				$consumed_resource = $this->getTaskConsume($task, $planet);
+				if (!$resource->sub($consumed_resource)) {
+					$task->addError('requirement', Utils::modelError($resource));
+					return;
+				}
+				break;
+
+			case 'activate':
+				$consumed_resource = $this->getTaskConsume($task, $planet);
+				if (!$resource->sub($consumed_resource)) {
+					$task->addError('requirement', Utils::modelError($resource));
+					return;
+				}
+				$task->end_time = $this->getTaskEndTime($task, $planet, $consumed_resource);
+				break;
+
+			default:
+				break;
 		}
-		
+
 		$chain->run();
 	}
 
 
 	/**
 	 *
-	 * @param ZTask $task
+	 * @param Task $task
 	 * @param ZPlanet $planet
 	 * @return Resources
 	 */
 	public function getTaskConsume($task, $planet){
 
-		return Resources::c(array());
+		return Resources::c(array('metal' => 100 * mt_rand(1, 20), 'crystal' => 100 * mt_rand(1, 10), 'gas' => 50 * mt_rand(1, 10)));
 	}
 
 
 	/**
 	 *
-	 * @param ZTask $task
+	 * @param Task $task
 	 * @param ZPlanet $planet
+	 * @param Resources $resources
 	 * @return string
 	 */
-	public function getTaskEndTime($task, $planet){
+	public function getTaskEndTime($task, $planet, $resources){
 
-		return date('Y-m-d H:i:s');
+	    $seconds = 15;//round($resources->totalAmount / $planet->buildings->getWorkRate() * 3600);
+		return Utils::ensureDateTime($task->activate_time)->add(new DateInterval('PT'. $seconds. 'S'))->format('Y-m-d H:i:s');
 	}
 
 }

@@ -75,6 +75,7 @@ class Planet extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+		    'tasks' => array(self::HAS_MANY, 'Task', 'planet_id', 'order' => 'create_time'),
 			'auctions' => array(self::HAS_MANY, 'Auction', 'recipient_planet_id'),
 			'auctionItems' => array(self::HAS_MANY, 'AuctionItem', 'depart_planet_id'),
 			'fleets' => array(self::HAS_MANY, 'Fleet', 'departure_planet_id'),
@@ -137,9 +138,9 @@ class Planet extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
-	
+
 	public function ofSystem($galaxy, $system){
-	    
+
 	    $this->getDbCriteria()->mergeWith(array(
 	        'condition' => 'galaxy=:galaxy AND system=:system',
 	        'params' => array(
@@ -149,14 +150,14 @@ class Planet extends CActiveRecord
 	        ));
 	    return $this;
 	}
-	
+
 	/**
 	 * Return location in format of [galaxy, system, position]
-	 * 
+	 *
 	 * @return string
 	 */
 	public function formatLocation(){
-	    
+
 	    return sprintf('[%d, %d, %d]', $this->galaxy, $this->system, $this->position);
 	}
 }

@@ -78,7 +78,6 @@ class Workflow extends CComponent {
         $nextTaskTime = $this->_taskQueue->getLastRunTime();
 
         while (true) {
-
             // in every working loop, at most one task can be executed.
             // this task is the one that has the earliest end time among
             // the tasks in working units.
@@ -97,6 +96,7 @@ class Workflow extends CComponent {
             $taskIndex = null;
             foreach ($this->_runningTasks as $index => $task) {
                 $taskEndTime = $task->getEndTime();
+
                 if ($nextTaskTime >= $taskEndTime) {
                     $nextTaskTime = $taskEndTime;
                     $nextFinishedTask = $task;
@@ -105,8 +105,10 @@ class Workflow extends CComponent {
             }
 
             if ($nextTaskTime <= $now && $nextFinishedTask) {
-                $this->onCompleteTask($nextFinishedTask);
+                $this->onCompleteTask($nextFinishedTask, $nextTaskTime);
+                $nextFinishedTask->delete();
                 unset($this->_runningTasks[$index]);
+                Yii::app()->user->setFlash('info_task_complete', 'Task "'. $task->getDescription(). '" is finished.');
             } else {
                 // no more task can be executed, so no more working unit can be released
                 // quit running loop
@@ -126,6 +128,15 @@ class Workflow extends CComponent {
         if ($task) {
             if ($task->isActivated() || $this->activateTask($task, $activateTime)) {
                 return $this->_runningTasks[] = $task;
+            } else {
+                if ($task->hasErrors()) {
+                    Yii::log('Task dropped because of error: '. Utils::modelError($task));
+                    Yii::app()->user->setFlash('error_task_dropped', 'Task "'. $task->getDescription(). '" is dropped because of error: '. Utils::modelError($task));
+                } else {
+                    Yii::log('Task aborted because of conflict. ');
+                    Yii::app()->user->setFlash('notice_task_dropped', 'Task "'. $task->getDescription(). '" is dropped because there is a same task in the running.');
+                }
+                $task->delete();
             }
         }
     }
@@ -133,17 +144,15 @@ class Workflow extends CComponent {
 
     private function activateTask(Task $task, DateTime $activateTime){
 
-    	if ($this->beforeActivateTask($task)) {
-    	
-            foreach ($this->_runningTasks as $running_task) {
-                if ($task->hasConflictWith($running_task)) {
-                    // this task has conflict with one running task.
-                    // it has to wait at the end of queue.
-                    $this->_taskQueue->push($task);
-                    return false;
-                }
+        foreach ($this->_runningTasks as $running_task) {
+            if ($task->hasConflictWith($running_task)) {
+                // this task has conflict with one running task.
+                // it has to wait at the end of queue.
+                return false;
             }
+        }
 
+    	if ($this->beforeActivateTask($task, $activateTime)) {
             $task->is_running = 1;
             $task->activate_time = $activateTime->format('Y-m-d H:i:s');
             $this->onActivateTask($task, $activateTime);
@@ -151,21 +160,17 @@ class Workflow extends CComponent {
                 throw new ModelError($task);
             }
             return true;
+    	} else {
+    	    return false;
     	}
-    	
-	    if ($task->hasErrors()) {
-            Yii::log('Task aborted. '. Utils::modelError($task));
-            $task->delete();
-        }
-        return false;
     }
-    
-    protected function beforeActivateTask(Task $task){
-    	
-    	$this->onBeforeActivateTask($task);
+
+    protected function beforeActivateTask(Task $task, DateTime $dateTime){
+
+    	$this->onBeforeActivateTask($task, $dateTime);
     	return !$task->hasErrors();
     }
-    
+
     public function onBeforeActivateTask(Task $task, DateTime $dateTime){
 
     	$task->setScenario('checkrequirement');
@@ -187,24 +192,23 @@ class Workflow extends CComponent {
 }
 
 /**
- * 
+ *
  * @property Workflow $sender
  * @property Task $task
  * @property DateTime $datetime
- * 
+ *
  * @author yaowenh
  */
 class WorkflowTaskEvent extends CEvent{
-    
+
     /**
      * Constructor
-     * 
+     *
      * @param Workflow $sender
      * @param Task $task
      * @param DateTime $dateTime
      */
     public function __construct(Workflow $sender, Task $task, DateTime $dateTime){
-        
         parent::__construct($sender, array(
             'task' => $task,
             'datetime' => $dateTime,
@@ -230,6 +234,6 @@ class WorkflowTaskEvent extends CEvent{
 
         return $this->params['datetime'];
     }
-    
+
 }
 

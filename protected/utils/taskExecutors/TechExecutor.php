@@ -9,6 +9,7 @@ class TechExecutor extends \TaskExecutor {
     public function execute($chain) {
 
         $task = $chain->task;
+
         if ($task->getType() == Task::TYPE_RESEARCH) {
 
         	switch ($task->scenario) {
@@ -17,6 +18,7 @@ class TechExecutor extends \TaskExecutor {
         				$task->addError('requirement', $error);
         				return;
         			}
+        			break;
         		case 'complete':
         			$chain->planet->techs->modify($task->getObject(), 1);
         			break;

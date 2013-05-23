@@ -8,7 +8,7 @@ class Utils {
      * @return string
      */
     public static function modelError(CModel $model) {
-        $errors = $model->hasErrors();
+        $errors = $model->getErrors();
         if (!empty($errors)) {
             foreach ($errors as $errs) {
                 foreach ($errs as $err) {
@@ -41,7 +41,7 @@ class Utils {
 
         return $_clone;
     }
-    
+
     /**
      * Built a Datetime object from given parameter
      *
@@ -52,7 +52,7 @@ class Utils {
      * @return DateTime
      */
     public static function ensureDateTime($dateTime, $format=null) {
-    
+
         if ( is_object($dateTime) ) {
             if ($dateTime instanceof DateTime) {
                 return clone $dateTime;
@@ -63,7 +63,7 @@ class Utils {
                 throw new InvalidArgumentException('Unable to convert a '. get_class($dateTime). ' into a DateTime.');
             }
         }
-    
+
         if (is_numeric($dateTime)) {
             if ($dateTime > 2000000000) {
                 $dateTime = round($dateTime / 1000);
@@ -72,12 +72,12 @@ class Utils {
             $dateTime->setTimezone(new DateTimeZone(DEFAULT_TIMEZONE));
             return $dateTime;
         }
-    
+
         if ( empty($dateTime) ) {
             // instead of throw exception, let's return a 0000 datetime
             return new DateTime('@0');
         }
-    
+
         if (is_string($dateTime)) {
             if ( is_string($format) ) {
                 $ret = DateTime::createFromFormat($format, $dateTime);
@@ -90,6 +90,40 @@ class Utils {
         } else {
             return new DateTime('@0');
         }
+    }
+
+
+    public static function getHours(DateInterval $diff){
+
+        $hours = $diff->h + $diff->i / 60 + $diff->s / 3600;
+        $hours += $diff->days * 24;
+        return $hours;
+    }
+
+
+    public static function displayFlash($key, $msg){
+
+        $htmlOptions = array();
+        if (preg_match('/^(notice|error|success|info)_(.+)$/', $key, $matches)) {
+            $htmlOptions['class'] = "fade in alert-$matches[1] alert";
+            $htmlOptions['data-key'] = $matches[2];
+        } else {
+            $htmlOptions['class'] = "fade in alert";
+            $htmlOptions['data-key'] = $key;
+        }
+
+        echo CHtml::openTag('div', $htmlOptions);
+        echo CHtml::openTag('button', array(
+            'type' => 'button',
+            'class' => 'close',
+            'data-dismiss' => 'alert',
+            ));
+        echo '&times;';
+        echo CHtml::closeTag('button');
+        echo CHtml::encode($msg);
+        echo CHtml::closeTag('div');
+
+        Yii::app()->clientScript->registerScript('bt-alert-box', '$(".alert").alert();', CClientScript::POS_END);
     }
 
 }

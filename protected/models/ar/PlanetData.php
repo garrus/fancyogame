@@ -106,7 +106,7 @@ class PlanetData extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
-	
+
 	public function beforeSave(){
 
 	    if ($this->isNewRecord) {
@@ -117,37 +117,37 @@ class PlanetData extends CActiveRecord
 	        $this->shipyard_queue || $this->shipyard_queue = '{}';
 	        $this->mines || $this->mines = '{}';
 	    }
-	    
+
 	    return parent::beforeSave();
 	}
-	
+
 	private $_resources=null;
 	private $_buildings=null;
 	private $_ships=null;
 	private $_defences=null;
 	private $_mines=null;
-	
-	
+
+
 	/**
 	 * @param Collection $name
 	 */
-	private function getCollection($name){
-	    
+	public function getCollection($name){
+
 	    $_cache = '_'. $name;
 	    if (!$this->$_cache) {
 	        $classname = ucfirst($name);
-	        
+
 	        if ($this->$name) {
 	            $obj = $this->$_cache = $classname::fromJson($this->$name);
 	        } else {
 	            $obj = $this->$_cache = new $classname;
 	            $this->$name = json_encode($obj);
 	        }
-	        $obj->onChange = array($this, 'onCollectionChange');
+	        $obj->attachEventHandler('onchange', array($this, 'onCollectionChange'));
 	    }
 	    return $this->$_cache;
 	}
-	
+
 	/**
 	 *
 	 * @param Collection $res
@@ -158,30 +158,30 @@ class PlanetData extends CActiveRecord
 	    $this->{'_'. $name} = $obj;
 	    $this->$name = json_encode($obj);
 	    if (!$this->isNewRecord) {
-	        if (!$this->save(true, array($name))) {
+	        if (!$this->save(true, array($name, 'last_update_time'))) {
 	            throw new ModelError($this);
 	        }
 	    }
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param CEvent $event
 	 */
 	public function onCollectionChange($event){
-	    
+
 	    $this->setCollection($event->sender);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return Mines
 	 */
 	public function getMines(){
-	    
+
 	    return new Mines($this->mines);
 	}
-	
+
 
 
 }

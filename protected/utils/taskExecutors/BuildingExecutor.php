@@ -19,6 +19,7 @@ class BuildingExecutor extends \TaskExecutor {
         					return;
         				}
         			}
+        			break;
         		case 'complete':
         			$chain->planet->buildings->modify($task->getObject(), $task->getType() == Task::TYPE_CONSTRUCT ? 1 : -1);
         			break;

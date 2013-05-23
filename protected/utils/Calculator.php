@@ -1,7 +1,7 @@
 <?php
 class Calculator {
 
-    private $_result_cache;
+    private static $_result_cache=array();
 
     public static function level_pow($level, $factor=1.1){
 

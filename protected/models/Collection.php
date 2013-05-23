@@ -30,6 +30,18 @@ abstract class Collection extends CFormModel implements JsonSerializable {
     }
 
     /**
+     * (non-PHPdoc)
+     * @see CComponent::__isset()
+     */
+    public function __isset($name){
+        if (isset($this->_amounts[$name])) {
+            return true;
+        } else {
+            return parent::__get($name);
+        }
+    }
+
+    /**
      *
      * @param string $scenario
      */
@@ -159,7 +171,7 @@ abstract class Collection extends CFormModel implements JsonSerializable {
      * @throws CException
      */
     private function setAttribute($name, $value){
-        if (is_numeric($value) && $value >= 0) {
+        if (is_numeric($value)) {
             $this->_amounts[$name] = intval($value, 10);
         } else {
             throw new CException('Invalid value for property '. get_class($this). '.'. $name);
@@ -187,6 +199,9 @@ abstract class Collection extends CFormModel implements JsonSerializable {
         } else {
             throw new InvalidArgumentException('Expecting parameter 1 to be a string or array, '. gettype($name). ' given.');
         }
+
+        //CVarDumper::dump($stored_attrs, 10, true);
+       // CVarDumper::dump($this->_amounts, 10, true);
 
         if ($this->_amounts == $stored_attrs) {
             return true;
@@ -232,9 +247,8 @@ abstract class Collection extends CFormModel implements JsonSerializable {
      * Event onChange
      */
     public function onChange(){
-
         $event = new CEvent($this);
-        $this->raiseEvent('onChange', $event);
+        $this->raiseEvent('onchange', $event);
     }
 
 
@@ -248,4 +262,12 @@ abstract class Collection extends CFormModel implements JsonSerializable {
     }
 
 
+    /**
+     *
+     * @return array
+     */
+    public function toArray(){
+
+        return $this->getAttributes();
+    }
 }

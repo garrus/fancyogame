@@ -41,7 +41,7 @@ class Task extends CActiveRecord implements ITask
 	 */
 	public function tableName()
 	{
-		return '{{task}}';
+		return 'task';
 	}
 
 	/**
@@ -52,7 +52,7 @@ class Task extends CActiveRecord implements ITask
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('type, target, create_time', 'required'),
+			array('type, target', 'required'),
 			array('is_running, type, amount', 'numerical', 'integerOnly'=>true),
 			array('planet_id', 'length', 'max'=>10),
 			array('target', 'length', 'max'=>22),
@@ -62,6 +62,7 @@ class Task extends CActiveRecord implements ITask
 			array('id, planet_id, is_running, type, target, amount, create_time, activate_time, end_time', 'safe', 'on'=>'search'),
 		);
 	}
+
 
 	/**
 	 * @return array relational rules.
@@ -151,6 +152,7 @@ class Task extends CActiveRecord implements ITask
 	            throw new InvalidArgumentException('Unexpected value for task type: '. $type);
 	    }
 	    $model->amount = $amount;
+	    $model->create_time = new CDbExpression('CURRENT_TIMESTAMP');
 	    if (!$model->save()) {
 	        throw new ModelError($model);
 	    }
@@ -161,7 +163,7 @@ class Task extends CActiveRecord implements ITask
 
 	/**
 	 * Return if this task is activated
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public function isActivated(){
@@ -201,44 +203,81 @@ class Task extends CActiveRecord implements ITask
 
 	/**
 	 * (non-PHPdoc)
-	 * 
+	 *
 	 * @see ITask::getType()
 	 */
 	public function getType(){
-		
+
 		return (int)$this->type;
 	}
 
 
 	/**
 	 * (non-PHPdoc)
-	 * 
+	 *
 	 * @see ITask::getObject()
 	 */
 	public function getObject(){
-		
+
 		return $this->target;
 	}
 
 
 	/**
 	 * (non-PHPdoc)
-	 * 
+	 *
 	 * @see ITask::getAmount()
 	 */
 	public function getAmount(){
-		
+
 		return round($this->amount);
 	}
 
 	/**
 	 * Return the end time as DateTime
-	 * 
+	 *
 	 * @return DateTime
 	 */
 	public function getEndTime(){
-	    
+
 	    return new DateTime($this->end_time);
 	}
+
+	/**
+	 *
+	 *
+	 * @return string
+	 */
+	public function getDescription(){
+
+	    switch ($this->type) {
+	        case self::TYPE_BUILD_SHIPS:
+	            $verb = 'Building ships';
+	            break;
+	        case self::TYPE_BUILD_DEFENCES:
+	            $verb = 'Building defences';
+	            break;
+	        case self::TYPE_CONSTRUCT:
+	            $verb = 'Constructing building';
+	            break;
+	        case self::TYPE_DECONSTRUCT:
+	            $verb = 'Deconstructing building';
+	            break;
+	        case self::TYPE_RESEARCH:
+	            $verb = 'Researching technology';
+	            break;
+	        default:
+	            return '';
+	    }
+
+	    $desc = sprintf('%s %s', $verb, ucwords(str_replace('_', ' ', $this->target)));
+	    if ($this->type == self::TYPE_BUILD_DEFENCES
+	        || $this->type == self::TYPE_BUILD_SHIPS) {
+	        $desc .= '['. $this->amount. ']';
+	    }
+
+	    return $desc;
+	}
+
 
 }
