@@ -141,7 +141,15 @@ class ZPlanet extends \Planet {
     		throw new CException('The task queue\'s length has reached its limit.');
     	}
 
-    	$task = Task::createNew($this, $type, $target, $amount=1);
+    	$task = Task::createNew($this, $type, $target, $amount);
+    	foreach($this->tasks as $_task){
+    	    if ($task->hasConflictWith($_task)) {
+    	        $task->delete();
+    	        Yii::app()->user->setFlash('error_task_failed_to_added', 'Task "'. $task->getDescription(). '" is not added because there is a same task in the running.');
+    	        return;
+    	    }
+    	}
+
     	$task->refresh();
     	$taskQueue->enqueue($task);
 

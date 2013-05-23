@@ -56,7 +56,7 @@ class ResourceExecutor extends TaskExecutor {
 	 */
 	public function getTaskConsume($task, $planet){
 
-		return Resources::c(array('metal' => 100 * mt_rand(1, 20), 'crystal' => 100 * mt_rand(1, 10), 'gas' => 50 * mt_rand(1, 10)));
+		return Resources::c(array('metal' => 10 * mt_rand(1, 20), 'crystal' => 10 * mt_rand(1, 10), 'gas' => 5 * mt_rand(1, 10)));
 	}
 
 

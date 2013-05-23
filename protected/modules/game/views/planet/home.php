@@ -33,6 +33,21 @@ $this->widget('bootstrap.widgets.TbMenu', array(
     'items' => $res_list,
 ));
 
+if (count($model->tasks)) :
+    $task_count = array('queue' => 0, 'running' => 0);
+    foreach ($model->tasks as $task) :
+        if ($task->isActivated())
+            ++$task_count['running'];
+        else
+            ++$task_count['queue'];
+    endforeach;
+    echo $task_count['running']. ' tasks in the running. ';
+    if ($task_count['queue']) :
+        echo $task_count['queue']. ' tasks in queue.';
+    endif;
+    unset($task_count);
+endif;
+
 echo 'Last updated: ', $model->planetData->last_update_time;
 
 foreach ($model->buildings as $buildname => $level) :?>
