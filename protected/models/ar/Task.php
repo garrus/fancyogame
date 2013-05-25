@@ -279,5 +279,17 @@ class Task extends CActiveRecord implements ITask
 	    return $desc;
 	}
 
+	/**
+	 *
+	 * @return string
+	 */
+	public function toArray(){
+
+	    $attr = $this->getAttributes();
+	    unset($attr['id'], $attr['planet_id'], $attr['amount']);
+	    $attr['desc'] = $this->getDescription();
+	    return $attr;
+	}
+
 
 }

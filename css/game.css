@@ -1,0 +1,32 @@
+@CHARSET "UTF-8";
+
+.portlet_container {
+	padding: 5px;
+	margin: 10px 0;
+	color: orange;
+	background-color: #222;
+	border: 1px solid #777;
+	border-radius: 5px;
+}
+
+.portlet_container ul {
+	margin: 0px;
+	padding: 0px;
+}
+
+.portlet_container ul li {
+	list-style: none;
+	line-height: 24px;
+}
+
+#res-widget>ul>li>div {
+	display: inline-block;
+}
+
+#res-widget>ul>li>div.res_name {
+	width: 70px;
+}
+
+#res-widget>ul>li>div.res_storage {
+	width: 90px;
+}

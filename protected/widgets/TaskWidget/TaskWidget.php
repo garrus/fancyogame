@@ -1,29 +1,35 @@
 <?php
 class TaskWidget extends \CWidget {
 
-    public $tasks;
+    public $tasks=array();
 
     public function run() {
 
-        if (count($this->tasks)) :
-            $task_count = array(
-                'queue' => 0,
-                'running' => 0);
-            foreach ($this->tasks as $task) :
-                if ($task->isActivated())
-                    ++$task_count['running'];
-                else
-                    ++$task_count['queue'];
-            endforeach
-            ;
-            echo $task_count['running'] . ' tasks in the running. ';
-            if ($task_count['queue']) :
-                echo $task_count['queue'] . ' tasks in queue.';
+        $queue = array();
+        $running = array();
 
-        endif;
-            unset($task_count);
+        foreach ($this->tasks as $task) {
+            if ($task->isActivated()) {
+                $running[] = $task->toArray();
+            } else {
+                $queue[] = $task->toArray();
+            }
+        }
 
-        endif;
+        usort($running, function($task1, $task2){
+            if (0 != ($ret = strcmp($task1['end_time'], $task2['end_time']))) {
+                return $ret;
+            }
+            return strcmp($task1['activate_time'], $task2['activate_time']) ?:
+                strcmp($task1['create_time'], $task2['create_time']);
+        });
+        usort($queue, function($task1, $task2){
+            return strcmp($task1['create_time'], $task2['create_time']);
+        });
+
+        $this->render('task_view', array(
+            'queue' => $queue,
+            'running' => $running,
+            ));
     }
-
 }

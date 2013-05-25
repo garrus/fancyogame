@@ -112,6 +112,17 @@ class ZPlanet extends \Planet {
     public function getTaskQueue(){
 
     	if (!$this->_taskQueue) {
+    	    $tasks = $this->tasks;
+    	    usort($tasks, function($t1, $t2){
+    	       $ret = $t2->is_running - $t1->is_running;
+    	       if ($ret) {
+    	           return $ret;
+    	       }
+
+    	       return strcmp($t1->create_time, $t2->create_time);
+    	    });
+
+
 	        $taskQueue = new TaskQueue($this->tasks, Utils::ensureDateTime($this->planetData->last_update_time));
 
 	        $taskQueue->setLimit($this->getTechs()->getPendingTaskLimit());
@@ -244,10 +255,19 @@ class ZPlanet extends \Planet {
         }
         if ($task->hasErrors()) {
             $trans->rollback();
-            return false;
         } else {
             $trans->commit();
-            return true;
+
+            if ($task->scenario == 'complete') {
+                $tasks = $this->tasks;
+                foreach($tasks as $index => $_task) {
+                    if ($_task->id == $task->id) {
+                        unset($tasks[$index]);
+                        break;
+                    }
+                }
+                $this->tasks = $tasks;
+            }
         }
     }
 

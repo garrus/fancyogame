@@ -2,26 +2,54 @@
 
 class ResourceWidget extends \CWidget {
 
+    /**
+     *
+     * @var ZPlanet
+     */
     public $planet;
 
     public function run(){
 
-        $res_list = array();
-        $resource = $this->planet->resources;
-        foreach ($resource->toArray() as $res => $amount) :
-        $res_list[] = array('label' => $res. ': '. $amount, 'url' => 'javascript:void(0);');
-        endforeach;
+        $prods = $this->planet->buildings->getProductionPerHour();
+        $energy_prod = $this->planet->buildings->getEnergyPerHour();
+        $energy_cost = $this->planet->buildings->getEnergyCostPerHour(false);
+        $res = $this->planet->resources;
 
-        foreach ($this->planet->buildings->getProductionPerHour() as $res => $prod) :
-        $res_list[] = array('label' => $res. '_: '. round($prod), 'url' => 'javascript:void(0);');
-        endforeach;
-        $energy = round($this->planet->buildings->getEnergyPerHour() - $this->planet->buildings->getEnergyCostPerHour(false));
-        $res_list[] = array('label' => 'Energy Prod: '. $energy, 'url' => 'javascript:void(0);');
+        $data = array(
+            array(
+                'label' => 'Energy',
+                'storage' => $res->energy,
+                'prod' => $energy_prod - $energy_cost,
+            ),
+            array(
+                'label' => 'Metal',
+                'storage' => $res->metal,
+                'prod' => $prods['metal'],
+                ),
+            array(
+                'label' => 'Crystal',
+                'storage' => $res->crystal,
+                'prod' => $prods['crystal'],
+                ),
+            array(
+                'label' => 'Gas',
+                'storage' => $res->gas,
+                'prod' => $prods['gas'],
+                ),
+            );
 
-        $this->widget('bootstrap.widgets.TbMenu', array(
-            'htmlOptions' => array('class' => 'nav-pills'),
-            'items' => $res_list,
-        ));
+        $factor = 1;
+        if ($energy_prod < $energy_cost && $res->energy < 1) {
+            $factor = $energy_prod / $energy_cost;
+        }
+
+        $this->render('res_view', array(
+            'factor' => $factor,
+            'data' => $data,
+            ));
+
+
+
     }
 
 }

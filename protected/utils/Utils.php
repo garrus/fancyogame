@@ -92,6 +92,29 @@ class Utils {
         }
     }
 
+    public static function formatDiff($datetime, DateTime $rel_datetime=null) {
+        $datetime = self::ensureDateTime($datetime);
+        if ($rel_datetime) {
+            $_datetime = clone $rel_datetime;
+        } else {
+            $_datetime = new DateTime;
+        }
+        $hours = self::getHours($datetime->diff($_datetime));
+
+        $seconds = intval(($hours - floor($hours)) * 3600);
+        $hours = floor($hours);
+        $minutes = floor($seconds / 60);
+        $seconds = $seconds % 60;
+        if ($hours) {
+            return sprintf('%dh %dm %ds', $hours, $minutes, $seconds);
+        } elseif ($minutes) {
+            return sprintf('%dm %ds', $minutes, $seconds);
+        } else {
+            return sprintf('%ds', $seconds);
+        }
+
+    }
+
 
     public static function getHours(DateInterval $diff){
 
