@@ -37,11 +37,18 @@ $this->widget('bootstrap.widgets.TbNavBar',array(
 	),
 )); ?>
 
-<div class="container" id="page" style="margin-top: 50px;">
+<div class="container" id="page" style="margin-top: 50px; min-height: 700px;">
 
 	<?php echo $content; ?>
 
 </div><!-- page -->
 
+<div class="container" id="footer">
+    <div class="label label-info">
+        <?php echo count(Yii::getLogger()->getLogs(CLogger::LEVEL_TRACE, 'system.db.CDbCommand'));?> queries,
+        <?php echo round(Yii::getLogger()->getExecutionTime() * 1000);?> ms,
+        <?php echo round(Yii::getLogger()->getMemoryUsage()/1024/1024, 2);?> MB
+    </div>
+</div>
 </body>
 </html>

@@ -138,7 +138,8 @@ class ZPlanet extends \Planet {
 
     	$taskQueue = $this->getTaskQueue();
     	if ($taskQueue->isFull()) {
-    		throw new CException('The task queue\'s length has reached its limit.');
+    	    Yii::app()->user->setFlash('error_task_failed_to_added', 'You have reached your task queue\'s length limit.');
+    	    return;
     	}
 
     	$task = Task::createNew($this, $type, $target, $amount);

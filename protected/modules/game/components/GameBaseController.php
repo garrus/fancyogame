@@ -52,7 +52,7 @@ class GameBaseController extends \CController {
         if (null !== ($this->player = Yii::app()->actx->getPlayer())) {
             $filterChain->run();
         } else {
-            $this->redirect(array('site/selectPlayer'));
+            $this->redirect(array('/site/selectPlayer'));
         }
     }
 

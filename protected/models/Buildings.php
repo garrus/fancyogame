@@ -30,7 +30,6 @@ class Buildings extends \Collection {
             'crystal_factory',
             'warehouse',
             'gas_plant',
-            'gas_storage',
             'lab',
             'shipyard',
             'war_academy',
@@ -86,7 +85,7 @@ class Buildings extends \Collection {
      */
     public function getWorkRate(){
 
-        return round(20000 + 10000 * Calculator::level_pow($this->robot_factory));
+        return round(2000 + 1000 * Calculator::level_pow($this->robot_factory));
     }
 
     /**
@@ -96,7 +95,7 @@ class Buildings extends \Collection {
      */
     public function getResearchRate(){
 
-        return round(10000 + 5000 * Calculator::level_pow($this->lab, 1.05));
+        return round(1000 + 500 * Calculator::level_pow($this->lab, 1.05));
     }
 
 
@@ -104,5 +103,47 @@ class Buildings extends \Collection {
 
         return 20000 * $this->solar_plant;
     }
+
+    /**
+     *
+     * @param string $item
+     * @return Resources
+     */
+    public function getItemConsume($item){
+
+        return self::getItemConsumeOfLevel($item, $this->$item + 1);
+    }
+
+    /**
+     *
+     * @param string $item building name
+     * @param int $level
+     * @return Resources
+     */
+    public static function getItemConsumeOfLevel($item, $level){
+
+        $data = self::$_consumes[$item];
+        $factor = pow($data['factor'], $level);
+        unset($data['factor']);
+        return Resources::c(array_map(function ($v) use($factor) {
+            return round($v * $factor);
+        }, $data));
+    }
+
+
+
+    private static $_consumes = array(
+
+        'solar_plant'     => array('metal' => 75,      'crystal' => 30,     'gas' => 0,      'energy' => 0, 'factor' => 1.5),
+        'metal_refinery'  => array('metal' => 60,      'crystal' => 15,     'gas' => 0,      'energy' => 0, 'factor' => 1.5),
+        'crystal_factory' => array('metal' => 48,      'crystal' => 24,     'gas' => 0,      'energy' => 0, 'factor' => 1.6),
+        'warehouse'       => array('metal' => 2000,    'crystal' => 2000,   'gas' => 0,      'energy' => 0, 'factor' => 2),
+        'gas_plant'       => array('metal' => 225,     'crystal' => 75,     'gas' => 0,      'energy' => 0, 'factor' => 1.5),
+        'lab'             => array('metal' => 200,     'crystal' => 400,    'gas' => 200,    'energy' => 0, 'factor' => 2),
+        'shipyard'        => array('metal' => 400,     'crystal' => 200,    'gas' => 100,    'energy' => 0, 'factor' => 2),
+        'war_academy'     => array('metal' => 1000000, 'crystal' => 500000, 'gas' => 100000, 'energy' => 0, 'factor' => 2),
+        'robot_factory'   => array('metal' => 400,     'crystal' => 120,    'gas' => 200,    'energy' => 0, 'factor' => 2),
+        'nuclear_plant'   => array('metal' => 900,     'crystal' => 360,    'gas' => 180,    'energy' => 0, 'factor' => 1.8),
+    );
 
 }

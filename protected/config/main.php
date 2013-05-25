@@ -63,6 +63,9 @@ $config = array(
 		'db'=>array(
 			'connectionString' => 'sqlite:'.dirname(__DIR__).'/data/testdrive.db',
 		),
+		'cache'=>array(
+		    'class' => 'CFileCache',
+		),
 
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors

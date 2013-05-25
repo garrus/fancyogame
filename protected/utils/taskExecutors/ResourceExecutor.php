@@ -56,7 +56,21 @@ class ResourceExecutor extends TaskExecutor {
 	 */
 	public function getTaskConsume($task, $planet){
 
-		return Resources::c(array('metal' => 10 * mt_rand(1, 20), 'crystal' => 10 * mt_rand(1, 10), 'gas' => 5 * mt_rand(1, 10)));
+
+	    switch($task->getType()){
+	        case Task::TYPE_CONSTRUCT:
+	            return $planet->buildings->getItemConsume($task->getObject());
+	        case Task::TYPE_DECONSTRUCT:
+	            return $planet->buildings->getItemConsume($task->getObject())->times(0.8);
+	        case Task::TYPE_RESEARCH:
+	            return $planet->techs->getItemConsume($task->getObject());
+	        case Task::TYPE_BUILD_SHIPS:
+	            return Ships::getItemConsumeOfCount($task->getObject(), $task->getAmount());
+	        case Task::TYPE_BUILD_DEFENCES:
+	            return Defences::getItemConsumeOfCount($task->getObject(), $task->getAmount());
+	        default:
+	            return new Resources();
+	    }
 	}
 
 
@@ -69,7 +83,7 @@ class ResourceExecutor extends TaskExecutor {
 	 */
 	public function getTaskEndTime($task, $planet, $resources){
 
-	    $seconds = 15;//round($resources->totalAmount / $planet->buildings->getWorkRate() * 3600);
+	    $seconds = round($resources->totalAmount / $planet->buildings->getWorkRate() * 3600);
 		return Utils::ensureDateTime($task->activate_time)->add(new DateInterval('PT'. $seconds. 'S'))->format('Y-m-d H:i:s');
 	}
 

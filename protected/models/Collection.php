@@ -166,6 +166,27 @@ abstract class Collection extends CFormModel implements JsonSerializable {
 
     /**
      *
+     * @param numeric $multi
+     * @return Collection
+     */
+    public function times($multi){
+
+        if ($multi > 0) {
+            if ($multi != 1) {
+                array_walk($this->_amounts, function(&$value, $index) use($multi){
+                    $value = round($multi * $value);
+                });
+            }
+        } else {
+            throw new CException('Argument should be a positive number.');
+        }
+
+        return $this;
+    }
+
+
+    /**
+     *
      * @param string $name
      * @param int $value must be a non-negative number
      * @throws CException
