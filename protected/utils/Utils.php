@@ -149,4 +149,27 @@ class Utils {
         Yii::app()->clientScript->registerScript('bt-alert-box', '$(".alert").alert();', CClientScript::POS_END);
     }
 
+
+    public static function timelinePercentage($time1, $time2, $now=null){
+
+        if (!is_int($time1)) {
+            $time1 = self::ensureDateTime($time1)->getTimestamp();
+        }
+        if (!is_int($time2)) {
+            $time2 = self::ensureDateTime($time2)->getTimestamp();
+        }
+        if (!$now) {
+            $now = time();
+        } elseif (!is_int($now)) {
+            $now = self::ensureDateTime($now)->getTimestamp();
+        }
+
+        if ($time2 == $time1) {
+            return 100;
+        }
+
+        return round(100 * ($now - $time1) / ($time2 - $time1));
+
+    }
+
 }

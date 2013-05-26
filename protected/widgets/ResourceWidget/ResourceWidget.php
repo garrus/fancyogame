@@ -15,12 +15,14 @@ class ResourceWidget extends \CWidget {
         $energy_cost = $this->planet->buildings->getEnergyCostPerHour(false);
         $res = $this->planet->resources;
 
-        $data = array(
-            array(
-                'label' => 'Energy',
-                'storage' => $res->energy,
-                'prod' => $energy_prod - $energy_cost,
-            ),
+        $energy_data = array(
+            'label' => 'Energy',
+            'storage' => $res->energy,
+
+            'prod' => $energy_prod - $energy_cost,
+        );
+
+        $res_data = array(
             array(
                 'label' => 'Metal',
                 'storage' => $res->metal,
@@ -38,14 +40,23 @@ class ResourceWidget extends \CWidget {
                 ),
             );
 
+
+        $enery_capacity = $this->planet->buildings->getEnergyCapacity();
+        $res_capacity = $this->planet->buildings->getWarehouseCapacity();
+
         $factor = 1;
         if ($energy_prod < $energy_cost && $res->energy < 1) {
             $factor = $energy_prod / $energy_cost;
         }
 
+        unset($energy_cost, $energy_prod, $prods, $res);
+
         $this->render('res_view', array(
             'factor' => $factor,
-            'data' => $data,
+            'energy_data' => $energy_data,
+            'res_data' => $res_data,
+            'energy_capacity' => $enery_capacity,
+            'res_capacity' => $res_capacity,
             ));
 
 

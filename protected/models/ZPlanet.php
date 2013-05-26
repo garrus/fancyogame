@@ -200,11 +200,10 @@ class ZPlanet extends \Planet {
         if ($task) {
             if ($task->isActivated()) {
                 $consume_res = ResourceExecutor::getTaskConsume($task, $this);
-                $left_hours = Utils::getHours(Utils::ensureDateTime($task->end_time)->diff(new DateTime));
+                $timeline_percent = Utils::timelinePercentage($task->activate_time, $task->end_time);
 
-                if ($left_hours != 0) {
-                    $ellapsed_hours = Utils::getHours(Utils::ensureDateTime($task->activate_time)->diff(new DateTime));
-                    $factor = $left_hours / ($left_hours + $ellapsed_hours);
+                if ($timeline_percent != 0) {
+                    $factor = $timeline_percent / 100;
 
                     switch ($task->getType()) {
                         case Task::TYPE_CONSTRUCT:

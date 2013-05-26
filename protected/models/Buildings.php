@@ -43,7 +43,7 @@ class Buildings extends \Collection {
         return array(
             'metal' => 30 * Calculator::level_pow($this->metal_refinery),
             'crystal' => 20 * Calculator::level_pow($this->crystal_factory),
-            'gas' => 10 * Calculator::level_pow($this->gas_plant) - 3 * Calculator::level_pow($this->nuclear_plant, 1.05),
+            'gas' => 15 * Calculator::level_pow($this->gas_plant) - 3 * Calculator::level_pow($this->nuclear_plant, 1.05),
         );
     }
 
@@ -70,12 +70,7 @@ class Buildings extends \Collection {
 
     public function getWarehouseCapacity(){
 
-        return 20000 * $this->warehouse * Calculator::level_pow($this->warehouse, 1.2);
-    }
-
-    public function getMaxGasStorage(){
-
-        return 10000 * $this->warehouse * Calculator::level_pow($this->warehouse, 1.2);
+        return 20000 + 20000 * Calculator::level_pow($this->warehouse, 1.2);
     }
 
     /**
@@ -85,7 +80,7 @@ class Buildings extends \Collection {
      */
     public function getWorkRate(){
 
-        return round(20000 + 4000 * Calculator::level_pow($this->robot_factory));
+        return round(30000 + 8000 * Calculator::level_pow($this->robot_factory));
     }
 
     /**
@@ -101,7 +96,7 @@ class Buildings extends \Collection {
 
     public function getEnergyCapacity(){
 
-        return 20000 * $this->solar_plant;
+        return round(200 * Calculator::level_pow($this->solar_plant, 1.05));
     }
 
     /**

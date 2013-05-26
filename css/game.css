@@ -19,14 +19,14 @@
 	line-height: 24px;
 }
 
-#res-widget>ul>li>div {
+#res-widget>ul>li>span {
 	display: inline-block;
 }
 
-#res-widget>ul>li>div.res_name {
-	width: 70px;
+#res-widget>ul>li>span.res_name {
+	width: 65px;
 }
 
-#res-widget>ul>li>div.res_storage {
-	width: 90px;
+#res-widget>ul>li>span.res_storage {
+	width: 70px;
 }
