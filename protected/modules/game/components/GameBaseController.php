@@ -69,8 +69,16 @@ class GameBaseController extends \CController {
             $planet();
             $filterChain->run();
         } else {
-            $this->redirect(array('list'));
+            $this->redirect(array('planet/list'));
         }
+    }
+
+
+    public function forwardHome(){
+
+        $this->redirect(array('planet/home'));
+
+        //$this->forward('planet/home', true);
     }
 
 }

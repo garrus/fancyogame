@@ -1,6 +1,8 @@
 <?php
 class TaskQueue extends SplQueue {
 
+    public $onTaskDeleted=null;
+
     /**
      * The length limit of this task queue
      * By default -1, means no limit.
@@ -15,12 +17,19 @@ class TaskQueue extends SplQueue {
      */
     private $_lastRunTime;
 
+
+    private $_pendingTaskCount = 0;
+
     public function __construct(array $tasks, DateTime $lastRunTime){
 
     	foreach ($tasks as $task) {
     		$this->enqueue($task);
+    		if (!$task->isActivated()) {
+    		    ++$this->_pendingTaskCount;
+    		}
     	}
     	$this->_lastRunTime = $lastRunTime;
+
     }
 
     public function getLastRunTime(){
@@ -50,7 +59,7 @@ class TaskQueue extends SplQueue {
      */
     public function isFull(){
 
-        return $this->_limit > 0 && $this->count() >= $this->_limit;
+        return $this->_limit > 0 && $this->_pendingTaskCount >= $this->_limit;
     }
 
     /**
@@ -64,10 +73,42 @@ class TaskQueue extends SplQueue {
         }
 
         if ($value instanceof Task) {
-            parent::push($value);
+            $this->push($value);
         } else {
             throw new InvalidArgumentException('Expecting parameter 1 to be a WorkflowTask, '. gettype($value). ' given.');
         }
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @param Task $task
+     * @see SplQueue::push()
+     */
+    public function push($task){
+        parent::push($task);
+        $task->attachEventHandler('onAfterDelete', array($this, 'onTaskDeleted'));
+    }
+
+    /**
+     *
+     * @param CModelEvent $event
+     */
+    public function onTaskDeleted($event){
+        if ($this->onTaskDeleted) {
+            if (is_callable($this->onTaskDeleted)) {
+                call_user_func($this->onTaskDeleted, $event->sender);
+            } else {
+                $this->onTaskDeleted($event->sender);
+            }
+        }
+    }
+
+    /**
+     *
+     * @param WorkflowTaskEvent $event
+     */
+    public function taskActivate($event){
+        --$this->_pendingTaskCount;
     }
 
     /**
@@ -77,6 +118,7 @@ class TaskQueue extends SplQueue {
     public function taskComplete($event){
 
     	$this->_lastRunTime = $event->datetime;
+
     }
 
 }

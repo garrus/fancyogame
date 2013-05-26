@@ -9,6 +9,12 @@ class Workflow extends CComponent {
 
     /**
      *
+     * @var TaskExecutorChain
+     */
+    private $_executorChain;
+
+    /**
+     *
      * @var array()
      */
     private $_runningTasks=array();
@@ -24,11 +30,13 @@ class Workflow extends CComponent {
      *
      * @param ZPlanet $planet
      */
-    public function __construct(TaskQueue $taskQueue, $maxWorkingUnit=3){
+    public function __construct(TaskQueue $taskQueue, TaskExecutorChain $chain, $maxWorkingUnit=3){
 
         $this->_taskQueue = $taskQueue;
+        $this->_executorChain = $chain;
         $this->_maxWorkingUnit = $maxWorkingUnit;
-        $this->onCompleteTask = array($taskQueue, 'taskComplete');
+        $this->attachEventHandler('onCompleteTask', array($taskQueue, 'taskComplete'));
+        $this->attachEventHandler('onAfterActivateTask', array($taskQueue, 'taskActivate'));
     }
 
     /**
@@ -68,7 +76,8 @@ class Workflow extends CComponent {
      */
     public function run(){
 
-        if (empty($this->_runningTasks) && !$this->hasWork()) {
+        if (!$this->isRunning() && !$this->hasWork()) {
+            Yii::getLogger()->log('No running task, and no pending task. Quit running.');
             // no running task, and no pending task
             return;
         }
@@ -105,11 +114,10 @@ class Workflow extends CComponent {
             }
 
             if ($nextTaskTime <= $now && $nextFinishedTask) {
-                $this->onCompleteTask($nextFinishedTask, $nextTaskTime);
-                $nextFinishedTask->delete();
-                unset($this->_runningTasks[$index]);
-                Yii::app()->user->setFlash('info_task_complete', 'Task "'. $task->getDescription(). '" is finished.');
+                Yii::getLogger()->log('Task "'. $nextFinishedTask->getDescription(). '" complete at '. $nextTaskTime->format('Y-d-d H:i:s'));
+                $this->completeTask($nextFinishedTask, $nextTaskTime);
             } else {
+                Yii::getLogger()->log('No more tasks can be executed. Quit running.');
                 // no more task can be executed, so no more working unit can be released
                 // quit running loop
                 break;
@@ -126,17 +134,19 @@ class Workflow extends CComponent {
 
         $task = $this->_taskQueue->dequeue();
         if ($task) {
-            if ($task->isActivated() || $this->activateTask($task, $activateTime)) {
+            if ($task->isActivated()) {
+                return $this->_runningTasks[] = $task;
+            } elseif ($this->activateTask($task, $activateTime)) {
                 return $this->_runningTasks[] = $task;
             } else {
                 if ($task->hasErrors()) {
-                    Yii::log('Task dropped because of error: '. Utils::modelError($task));
+                    Yii::getLogger()->log('Task "'. $task->getDescription(). '" dropped because of error: '. Utils::modelError($task), 'debug');
                     Yii::app()->user->setFlash('error_task_dropped', 'Task "'. $task->getDescription(). '" is dropped because of error: '. Utils::modelError($task));
+                    $task->delete();
                 } else {
-                    Yii::log('Task aborted because of conflict. ');
+                    Yii::getLogger()->log('Task "'. $task->getDescription(). '" is not activated because of conflict.');
                     Yii::app()->user->setFlash('notice_task_dropped', 'Task "'. $task->getDescription(). '" is dropped because there is a same task in the running.');
                 }
-                $task->delete();
             }
         }
     }
@@ -144,21 +154,18 @@ class Workflow extends CComponent {
 
     private function activateTask(Task $task, DateTime $activateTime){
 
-        foreach ($this->_runningTasks as $running_task) {
-            if ($task->hasConflictWith($running_task)) {
-                // this task has conflict with one running task.
-                // it has to wait at the end of queue.
-                return false;
-            }
-        }
-
     	if ($this->beforeActivateTask($task, $activateTime)) {
-            $task->is_running = 1;
-            $task->activate_time = $activateTime->format('Y-m-d H:i:s');
-            $this->onActivateTask($task, $activateTime);
+    	    $task->setScenario('activate');
+    	    $task->is_running = 1;
+    	    $task->activate_time = $activateTime->format('Y-m-d H:i:s');
+    	    $this->_executorChain->runTask($task);
             if (!$task->save()) {
                 throw new ModelError($task);
             }
+
+            $this->onAfterActivateTask($task);
+            Yii::getLogger()->log('Task "'. $task->getDescription(). '" activated on '. $task->activate_time);
+
             return true;
     	} else {
     	    return false;
@@ -167,26 +174,42 @@ class Workflow extends CComponent {
 
     protected function beforeActivateTask(Task $task, DateTime $dateTime){
 
-    	$this->onBeforeActivateTask($task, $dateTime);
-    	return !$task->hasErrors();
+        foreach ($this->_runningTasks as $running_task) {
+            if ($task->hasConflictWith($running_task)) {
+                // this task has conflict with one running task.
+                // it has to wait at the end of queue.
+                return false;
+            }
+        }
+    	return $this->_executorChain->checkResource($task);
     }
 
-    public function onBeforeActivateTask(Task $task, DateTime $dateTime){
+    public function onAfterActivateTask($task){
 
-    	$task->setScenario('checkrequirement');
-    	$this->raiseEvent('onBeforeActivateTask', new WorkflowTaskEvent($this, $task, $dateTime));
+        $event = new WorkflowTaskEvent($this, $task);
+        $this->raiseEvent('onAfterActivateTask', $event);
     }
 
-    public function onActivateTask(Task $task, DateTime $dateTime){
+    public function completeTask($task){
 
-        $task->setScenario('activate');
-    	$this->raiseEvent('onActivateTask', new WorkflowTaskEvent($this, $task, $dateTime));
+        $task->scenario = 'complete';
+        $this->_executorChain->runTask($task);
+        foreach ($this->_runningTasks as $index => $_task) {
+            if ($task->id == $_task->id) {
+                unset($this->_runningTasks[$index]);
+            }
+        }
+        $task->delete();
+
+        $this->onCompleteTask($task);
     }
 
-    public function onCompleteTask(Task $task, DateTime $dateTime){
+    public function onCompleteTask(Task $task){
 
-        $task->setScenario('complete');
-    	$this->raiseEvent('onCompleteTask', new WorkflowTaskEvent($this, $task, $dateTime));
+
+
+        $event = new WorkflowTaskEvent($this, $task);
+        $this->raiseEvent('onCompleteTask', $event);
     }
 
 }
@@ -208,10 +231,23 @@ class WorkflowTaskEvent extends CEvent{
      * @param Task $task
      * @param DateTime $dateTime
      */
-    public function __construct(Workflow $sender, Task $task, DateTime $dateTime){
+    public function __construct(Workflow $sender, Task $task){
+
+        switch ($task->scenario) {
+            case 'activate':
+                $datetime = Utils::ensureDateTime($task->activate_time);
+                break;
+            case 'complete':
+                $datetime = Utils::ensureDateTime($task->end_time);
+                break;
+            default:
+                $datetime = new DateTime;
+                break;
+        }
+
         parent::__construct($sender, array(
             'task' => $task,
-            'datetime' => $dateTime,
+            'datetime' => $datetime,
         ));
     }
 

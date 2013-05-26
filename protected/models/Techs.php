@@ -32,7 +32,6 @@ class Techs extends \Collection {
             'buster',
             'intergalactic',
             'expedition',
-            'graviton',
         );
     }
 

@@ -68,7 +68,7 @@ SCRIPT
                 <div class="span2"><?php echo ucwords(str_replace('_', ' ', $buildname));?></div>
                 <div class="span1">Level: <em><?php echo $level;?></em></div>
                 <div class="span1">
-                    <?php echo CHtml::link('Level Up', array('building/const', 'name' => $buildname), array('class' => 'btn btn-success btn-small '. ($available ? '' : 'disabled')));?>
+                    <?php echo CHtml::link('Construct', array('task/add', 'type' => Task::TYPE_CONSTRUCT, 'name' => $buildname), array('class' => 'btn btn-success btn-small '. ($available ? '' : 'disabled')));?>
                     <?php // echo $level!=0 ? CHtml::link('Level Down', array('building/deconst', 'name' => $buildname), array('class' => 'btn btn-warning btn-small')) : ''?>
                 </div>
                 <div class="span4">
@@ -97,11 +97,33 @@ SCRIPT
 
         <div class="tab_view" id="tab_content_techs" style="display: none;">
             <?php
-                $this->widget('bootstrap.widgets.TbDetailView', array(
-                    'data' => $model->techs,
-                    'attributes' => $model->techs->attributeNames(),
-                ));
-            ?>
+            $resource = $model->resources;
+            foreach ($model->techs as $techName => $level) :
+                $available = true;
+                ob_start();
+                $res = $model->techs->getItemConsume($techName);
+                foreach ($res->getAttributes(array('metal', 'crystal', 'gas', 'energy')) as $item => $cost) :
+                    if ($cost != 0) :
+                        $match_requirement = $cost < $resource->$item;
+                        $available = $available && $match_requirement;
+                        echo CHtml::tag('div', array('class' => 'label label-'. ($match_requirement? 'success' : 'important')), ucfirst($item). ': '. $cost);
+                    endif;
+                endforeach;
+                $res_badges = ob_get_clean();
+                ?>
+            <div class="row" style="line-height: 32px;">
+
+                <div class="span2"><?php echo ucwords(str_replace('_', ' ', $techName));?></div>
+                <div class="span1">Level: <em><?php echo $level;?></em></div>
+                <div class="span1">
+                    <?php echo CHtml::link('Research', array('task/add', 'type' => Task::TYPE_RESEARCH, 'name' => $techName), array('class' => 'btn btn-success btn-small '. ($available ? '' : 'disabled')));?>
+                </div>
+                <div class="span4">
+                    <?php echo $res_badges;?>
+                </div>
+            </div>
+
+            <?php endforeach;?>
         </div>
 
     </div>

@@ -91,7 +91,6 @@ class AppContext extends \CApplicationComponent {
 
         if ($this->getSession()->get('current_player') == $planet->owner_id) {
             $this->getSession()->add('current_planet', $planet->id);
-
             $this->_planet = $planet;
         } else {
             throw new CException('Invalid operation. Planet '. $planet->name. ' is not of current player.');
@@ -108,7 +107,7 @@ class AppContext extends \CApplicationComponent {
 
         if ($this->getWebUser()->getId() == $player->account_id) {
             $this->getSession()->add('current_player', $player->id);
-
+            $this->getSession()->remove('current_planet');
             $this->_player = $player;
         } else {
             throw new CException('Invalid operation. Player '. $player->name. ' is not of current logged in user.');

@@ -14,7 +14,9 @@ if (count($queue) + count($running) == 0) return;
     <ol>
         <?php foreach ($running as $task):?>
         <li>
-            <label><?php echo $task['desc'];?></label>
+            <label><?php echo $task['desc'];?>
+            <?php echo CHtml::link('', array('task/cancel', 'id' => $task['id']), array('class' => 'icon icon-remove icon-white'));?>
+            </label>
             <small class="muted">Finished in
                 <span class="badge badge-inverse">
                     <?php echo Utils::formatDiff($task['end_time']);?>
@@ -29,7 +31,9 @@ if (count($queue) + count($running) == 0) return;
     <ol>
         <?php foreach ($queue as $task):?>
         <li>
-            <label><?php echo $task['desc'];?></label>
+            <label><?php echo $task['desc'];?>
+            <?php echo CHtml::link('', array('task/cancel', 'id' => $task['id']), array('class' => 'icon icon-remove icon-white'));?>
+            </label>
             <small class="muted">Created on <?php echo $task['create_time'];?></small>
         </li>
         <?php endforeach;?>

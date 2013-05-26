@@ -24,6 +24,7 @@
  * @property PlanetMine[] $planetMines
  * @property Account $account
  * @property Relay[] $relays
+ * @property PlayerData $playerData
  * @property RelayAccessHistory[] $relayAccessHistories
  */
 class Player extends CActiveRecord
@@ -44,6 +45,20 @@ class Player extends CActiveRecord
 	public function tableName()
 	{
 		return 'player';
+	}
+
+
+	protected function afterSave(){
+	    if ($this->isNewRecord) {
+	        $data = new PlayerData;
+	        $data->player_id = $this->id;
+	        if (!$data->save()) {
+	            $this->delete();
+	            throw new ModelError($data);
+	        }
+	        $this->playerData = $data;
+	    }
+	    return parent::afterSave();
 	}
 
 	/**
@@ -78,6 +93,7 @@ class Player extends CActiveRecord
 			'planets' => array(self::HAS_MANY, 'Planet', 'owner_id'),
 		    'planetCount' => array(self::STAT, 'Planet', 'owner_id'),
 			'planetMines' => array(self::HAS_MANY, 'PlanetMine', 'owner_id'),
+		    'playerData' => array(self::HAS_ONE, 'PlayerData', 'player_id'),
 			'account' => array(self::BELONGS_TO, 'Account', 'account_id'),
 		);
 	}
@@ -128,12 +144,4 @@ class Player extends CActiveRecord
 		));
 	}
 
-	/**
-	 *
-	 * @return Techs
-	 */
-	public function getTechs(){
-
-	    return new Techs;
-	}
 }

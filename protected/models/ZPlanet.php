@@ -101,7 +101,7 @@ class ZPlanet extends \Planet {
      */
     public function getTechs(){
 
-        return $this->owner->getTechs();
+        return $this->owner->playerData->getCollection('techs');
     }
 
 
@@ -126,9 +126,26 @@ class ZPlanet extends \Planet {
 	        $taskQueue = new TaskQueue($this->tasks, Utils::ensureDateTime($this->planetData->last_update_time));
 
 	        $taskQueue->setLimit($this->getTechs()->getPendingTaskLimit());
+	        $taskQueue->onTaskDeleted = array($this, 'dropTask');
 	        return $this->_taskQueue = $taskQueue;
     	}
     	return $this->_taskQueue;
+    }
+
+    public function dropTask(Task $task, $delete=false){
+
+        if ($this->hasRelated('tasks')) {
+            $_tasks = $this->tasks;
+            foreach ($_tasks as $index => $_task) {
+                if ($task->id == $_task->id) {
+                    unset($_tasks[$index]);
+                }
+            }
+            $this->tasks = $_tasks;
+        }
+        if ($delete) {
+            $task->delete();
+        }
     }
 
 
@@ -148,25 +165,71 @@ class ZPlanet extends \Planet {
     	}
 
     	$taskQueue = $this->getTaskQueue();
+
     	if ($taskQueue->isFull()) {
     	    Yii::app()->user->setFlash('error_task_failed_to_added', 'You have reached your task queue\'s length limit.');
+    	    return;
+    	} else {
+
+    	    Yii::getLogger('Task queue count: '. $taskQueue->count(), ', limit is '. $this->getTechs()->getPendingTaskLimit(), 'warning');
+
+    	}
+
+    	if (TechTree::checkRequirement($this, $type, $target, $amount)) {
+    	    Yii::app()->user->setFlash('error_task_failed_to_added', 'Tech requirement is not matched.');
     	    return;
     	}
 
     	$task = Task::createNew($this, $type, $target, $amount);
-    	foreach($this->tasks as $_task){
-    	    if ($task->hasConflictWith($_task)) {
-    	        $task->delete();
-    	        Yii::app()->user->setFlash('error_task_failed_to_added', 'Task "'. $task->getDescription(). '" is not added because there is a same task in the running.');
-    	        return;
-    	    }
-    	}
-
     	$task->refresh();
     	$taskQueue->enqueue($task);
 
     	Yii::app()->user->setFlash('success_task_added', 'Task "'. $task->getDescription(). '" is added successfully!');
     	$workflow->run();
+    }
+
+
+    public function cancelTask($id){
+
+        $workflow = $this->getWorkflow();
+        if ($workflow->isRunning()) {
+            $workflow->run();
+        }
+
+        $task = Task::model()->findByPk($id);
+        if ($task) {
+            if ($task->isActivated()) {
+                $consume_res = ResourceExecutor::getTaskConsume($task, $this);
+                $left_hours = Utils::getHours(Utils::ensureDateTime($task->end_time)->diff(new DateTime));
+
+                if ($left_hours != 0) {
+                    $ellapsed_hours = Utils::getHours(Utils::ensureDateTime($task->activate_time)->diff(new DateTime));
+                    $factor = $left_hours / ($left_hours + $ellapsed_hours);
+
+                    switch ($task->getType()) {
+                        case Task::TYPE_CONSTRUCT:
+                            $this->resources->add($consume_res->times($factor));
+                            break;
+                        case Task::TYPE_BUILD_SHIPS:
+                            $collection = $this->ships;
+                        case Task::TYPE_BUILD_DEFENCES:
+                            if (isset($collection)) {
+                                $collection = $this->defences;
+                            }
+                            $this->resources->add($consume_res->times($factor));
+                            $finished_count = floor($factor * $task->getAmount());
+                            $collection->modify($factor, $finished_count);
+                            break;
+                        case Task::TYPE_RESEARCH:
+                        default:
+                            break;
+                    }
+                }
+            }
+            $this->_workflow = null;
+            $this->_taskQueue = null;
+            $this->dropTask($task, true);
+        }
     }
 
 
@@ -176,12 +239,11 @@ class ZPlanet extends \Planet {
     public function getWorkflow(){
 
     	if (!$this->_workflow) {
-	    	$workflow = new Workflow($this->taskQueue, $this->techs->getMaxWorkingUnit());
-	    	$workflow->onBeforeActivateTask = array($this, 'taskStageChange');
-	    	$workflow->onActivateTask = array($this, 'taskStageChange');
-	    	$workflow->onCompleteTask = array($this, 'taskStageChange');
-
-	    	return $this->_workflow = $workflow;
+	    	return $this->_workflow = new Workflow(
+	    	    $this->getTaskQueue(),
+	    	    $this->createTaskExecutorChain(),
+	    	    $this->techs->getMaxWorkingUnit()
+	    	    );
     	}
     	return $this->_workflow;
     }
@@ -197,43 +259,18 @@ class ZPlanet extends \Planet {
      * @param Task $task
      * @return TaskExecutorChain
      */
-    private function createTaskExecutorChain($task){
+    private function createTaskExecutorChain(){
 
-        if (!$this->_chain) {
+        Yii::import('application.utils.taskExecutors.*');
 
-            Yii::import('application.utils.taskExecutors.*');
-
-            $chain = $this->_chain = new TaskExecutorChain($this, $task);
-            $chain->add(new ResourceExecutor());
-            $chain->add(new TechExecutor());
-            $chain->add(new BuildingExecutor());
-            $chain->add(new ShipExecutor());
-            $chain->add(new DefenceExecutor());
-        } else {
-            $this->_chain->setTask($task);
-        }
-        return $this->_chain;
-
-        /*
-        switch ($task->type) {
-            case Task::TYPE_RESEARCH:
-                $chain->add(new TechExecutor());
-                break;
-            case Task::TYPE_CONSTRUCT:
-            case Task::TYPE_DECONSTRUCT:
-                $chain->add(new BuildingExecutor());
-                break;
-            case Task::TYPE_BUILD_SHIPS:
-                $chain->add(new ShipExecutor());
-                break;
-            case Task::TYPE_BUILD_DEFENCES:
-                $chain->add(new DefenceExecutor());
-            default:
-                break;
-        }
+        $chain = $this->_chain = new TaskExecutorChain($this);
+        $chain->add(new ResourceExecutor());
+        $chain->add(new TechExecutor());
+        $chain->add(new BuildingExecutor());
+        $chain->add(new ShipExecutor());
+        $chain->add(new DefenceExecutor());
 
         return $chain;
-        */
     }
 
 
@@ -257,17 +294,6 @@ class ZPlanet extends \Planet {
             $trans->rollback();
         } else {
             $trans->commit();
-
-            if ($task->scenario == 'complete') {
-                $tasks = $this->tasks;
-                foreach($tasks as $index => $_task) {
-                    if ($_task->id == $task->id) {
-                        unset($tasks[$index]);
-                        break;
-                    }
-                }
-                $this->tasks = $tasks;
-            }
         }
     }
 
@@ -280,9 +306,6 @@ class ZPlanet extends \Planet {
         // solution: pass in a date time
         $this->getWorkflow()->run();
         $this->updateResources(new DateTime());
-        //$this->planetData->last_update_time = new CDbExpression('CURRENT_TIMESTAMP');
-        //$this->planetData->save();
-        //$this->planetData->refresh();
     }
 
     /**

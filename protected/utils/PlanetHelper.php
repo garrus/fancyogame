@@ -76,7 +76,7 @@ class PlanetHelper {
         $planet->owner = $player;
 
         $data = new PlanetData();
-        $data->setResources(Resources::c(array(
+        $data->setCollection(Resources::c(array(
                 'metal' => 2000,
                 'crystal' => 1000,
                 'gas' => 500
@@ -101,7 +101,6 @@ class PlanetHelper {
         $planet->owner = $player;
 
         $data = new PlanetData();
-        $data->setResources(new Resources);
         $data->planet_id = $planet->id;
         $data->last_update_time = new CDbExpression('CURRENT_TIMESTAMP');
         if (!$data->save()) {

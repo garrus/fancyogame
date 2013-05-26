@@ -11,7 +11,7 @@ class TechTree {
      * @return string  the error message. if the requirement
      * is matched, empty string will be returned.
      */
-    public static function checkRequirement($itemName, $buildings, $techs) {
+    public static function checkRequirement(ZPlanet $planet, $type, $itemName) {
 
         return '';
     }

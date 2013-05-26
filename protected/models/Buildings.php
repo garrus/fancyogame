@@ -85,7 +85,7 @@ class Buildings extends \Collection {
      */
     public function getWorkRate(){
 
-        return round(2000 + 1000 * Calculator::level_pow($this->robot_factory));
+        return round(20000 + 4000 * Calculator::level_pow($this->robot_factory));
     }
 
     /**
@@ -95,7 +95,7 @@ class Buildings extends \Collection {
      */
     public function getResearchRate(){
 
-        return round(1000 + 500 * Calculator::level_pow($this->lab, 1.05));
+        return round(1000 + 3000 * Calculator::level_pow($this->lab, 1.05));
     }
 
 

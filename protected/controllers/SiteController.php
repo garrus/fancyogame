@@ -2,7 +2,7 @@
 
 class SiteController extends Controller
 {
-    
+
     /**
 	 * @return array action filters
 	 */
@@ -32,8 +32,8 @@ class SiteController extends Controller
 			array('deny'),
 		);
 	}
-    
-    
+
+
 	/**
 	 * Declares class-based actions.
 	 */
@@ -59,11 +59,11 @@ class SiteController extends Controller
 	 */
 	public function actionIndex()
 	{
-	    
+
 	    if (!Yii::app()->user->isGuest) {
 	        $this->redirect(array('site/selectPlayer'));
 	    }
-	    
+
 		$model=new LoginForm;
 
 		// if it is ajax validation request
@@ -82,15 +82,15 @@ class SiteController extends Controller
 				$this->redirect(Yii::app()->user->returnUrl);
 		}
 		$this->render('index', array(
-			'model' => $model,	
+			'model' => $model,
 		));
 	}
-	
+
 	/**
 	 * Select a player to enter game
 	 */
 	public function actionSelectPlayer($id=null){
-	    
+
 	    if ($id) {
 	        if ($id == 'current') {
 	            $player = Yii::app()->actx->player;
@@ -116,17 +116,17 @@ class SiteController extends Controller
 	        'currentPlayer' => Yii::app()->actx->player,
 	    ));
 	}
-	
+
 	public function actionNewPlayer(){
-	    
+
 	    $model=new Player;
-	    
+
 	    if(isset($_POST['ajax']) && $_POST['ajax']==='player-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
-	    
+
 	    if(isset($_POST['Player']))
 	    {
 	        $model->attributes=$_POST['Player'];
@@ -135,12 +135,12 @@ class SiteController extends Controller
 	            $this->redirect(array('site/selectplayer','id'=>$model->id));
 	        }
 	    }
-	    
+
 	    $this->render('new_player',array(
 	        'model'=>$model,
 	    ));
-	    
-	    
+
+
 	}
 
 	/**
@@ -183,18 +183,18 @@ class SiteController extends Controller
 		$this->render('contact',array('model'=>$model));
 	}
 
-	
+
 	public function actionSignup(){
-		
+
 		$model = new SignupForm();
-				
+
 		// Uncomment the following line if AJAX validation is needed
 		if(isset($_POST['ajax']) && $_POST['ajax']==='signup-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
-		
+
 		if(isset($_POST['SignupForm']))
 		{
 			$model->attributes=$_POST['SignupForm'];
@@ -204,12 +204,12 @@ class SiteController extends Controller
 				$this->redirect(array('/site/index'));
 			}
 		}
-		
+
 		$this->render('signup',array(
 				'model'=>$model,
 		));
-		
-		
+
+
 	}
 
 	/**

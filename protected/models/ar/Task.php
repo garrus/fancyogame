@@ -22,7 +22,6 @@ class Task extends CActiveRecord implements ITask
 
     const TYPE_RESEARCH = 1;
     const TYPE_CONSTRUCT = 2;
-    const TYPE_DECONSTRUCT = 3;
     const TYPE_BUILD_SHIPS = 4;
     const TYPE_BUILD_DEFENCES = 5;
 
@@ -56,12 +55,21 @@ class Task extends CActiveRecord implements ITask
 			array('is_running, type, amount', 'numerical', 'integerOnly'=>true),
 			array('planet_id', 'length', 'max'=>10),
 			array('target', 'length', 'max'=>22),
+		    array('activate_time,end_time', 'noneEmptyTimestamp', 'on' => 'activate'),
 			array('activate_time, end_time', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, planet_id, is_running, type, target, amount, create_time, activate_time, end_time', 'safe', 'on'=>'search'),
 		);
 	}
+
+
+    public function noneEmptyTimestamp($attribute) {
+
+        if ($this->$attribute == '0000-00-00 00:00:00') {
+            $this->addError($attribute, 'Task.' . $attribute . ' must be set before activate.');
+        }
+    }
 
 
 	/**
@@ -141,7 +149,6 @@ class Task extends CActiveRecord implements ITask
 	    switch ($type) {
 	        case self::TYPE_RESEARCH:
 	        case self::TYPE_CONSTRUCT:
-	        case self::TYPE_DECONSTRUCT:
 	            $amount = 1;
 	            break;
 	        case self::TYPE_BUILD_SHIPS:
@@ -195,9 +202,7 @@ class Task extends CActiveRecord implements ITask
 	        return $this->type != self::TYPE_BUILD_DEFENCES && $this->type != self::TYPE_BUILD_SHIPS;
 	    }
 
-	    // at last, you cannot construct and deconstruct the same building
-	    return ($this->type == self::TYPE_CONSTRUCT && $task->type == self::TYPE_DECONSTRUCT)
-	        || ($this->type == self::TYPE_DECONSTRUCT && $task->type == self::TYPE_CONSTRUCT);
+	    return false;
 	}
 
 
@@ -240,7 +245,7 @@ class Task extends CActiveRecord implements ITask
 	 */
 	public function getEndTime(){
 
-	    return new DateTime($this->end_time);
+	    return Utils::ensureDateTime($this->end_time);
 	}
 
 	/**
@@ -252,19 +257,16 @@ class Task extends CActiveRecord implements ITask
 
 	    switch ($this->type) {
 	        case self::TYPE_BUILD_SHIPS:
-	            $verb = 'Building ships';
+	            $verb = 'Building';
 	            break;
 	        case self::TYPE_BUILD_DEFENCES:
-	            $verb = 'Building defences';
+	            $verb = 'Building';
 	            break;
 	        case self::TYPE_CONSTRUCT:
-	            $verb = 'Constructing building';
-	            break;
-	        case self::TYPE_DECONSTRUCT:
-	            $verb = 'Deconstructing building';
+	            $verb = 'Constructing';
 	            break;
 	        case self::TYPE_RESEARCH:
-	            $verb = 'Researching technology';
+	            $verb = 'Researching on tech';
 	            break;
 	        default:
 	            return '';
@@ -286,7 +288,7 @@ class Task extends CActiveRecord implements ITask
 	public function toArray(){
 
 	    $attr = $this->getAttributes();
-	    unset($attr['id'], $attr['planet_id'], $attr['amount']);
+	    unset($attr['planet_id'], $attr['amount']);
 	    $attr['desc'] = $this->getDescription();
 	    return $attr;
 	}

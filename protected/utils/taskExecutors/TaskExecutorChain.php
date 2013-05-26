@@ -33,11 +33,9 @@ class TaskExecutorChain extends \CTypedList {
      * @param ZPlanet $planet
      * @param Task $task
      */
-    public function __construct(ZPlanet $planet, Task $task) {
+    public function __construct(ZPlanet $planet) {
 
         $this->planet = $planet;
-        $this->task = $task;
-
         parent::__construct('TaskExecutor');
     }
 
@@ -52,15 +50,63 @@ class TaskExecutorChain extends \CTypedList {
         return $this;
     }
 
+    /**
+     *
+     * @param Task $task
+     * @return TaskExecutorChain
+     */
     public function setTask(Task $task){
         $this->task = $task;
         $this->executorIndex = 0;
+        return $this;
     }
 
+
+    /**
+     *
+     * @param Task $task
+     */
+    public function runTask(Task $task){
+
+        $this->setTask($task)->run();
+    }
+
+
+    /**
+     * Check if the resouce is enough for this task
+     *
+     * @param Task $task
+     * @return boolean
+     */
+    public function checkResource(Task $task) {
+
+        $resource = Utils::cleanClone($this->planet->resources);
+        $consumed_resource = ResourceExecutor::getTaskConsume($task, $this->planet);
+        if (!$resource->sub($consumed_resource)) {
+            $task->addError('requirement', Utils::modelError($resource));
+        }
+
+        return !$task->hasErrors();
+    }
+
+
+    /**
+     *
+     * @throws BadMethodCallException
+     */
     public function run() {
 
+        if (!$this->task) {
+            throw new BadMethodCallException('No current task is set. (call TaskExecutorChain->setTask() first)');
+        }
+
+        Rotate_Executor:
         if ($this->offsetExists($this->executorIndex)) {
             $executor = $this->itemAt($this->executorIndex++);
+            $types = $executor->acceptedTaskTypes();
+            if (count($types) && !in_array($this->task->getType(), $types)) {
+                goto Rotate_Executor;
+            }
             $executor->execute($this);
         }
     }
