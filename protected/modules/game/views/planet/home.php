@@ -12,8 +12,11 @@ $this->widget('bootstrap.widgets.TbBreadcrumbs', array(
 Yii::app()->clientScript->registerScript('home-funcs', <<<'SCRIPT'
 
 function switchTab(event){
-    $('.tab_view').hide();
-    $('#tab_content_' + $(event.srcElement).data('content')).show();
+    var $targetTab = $('#tab_content_' + $(event.srcElement ? event.srcElement : event.target).data('content'));
+    if ($targetTab.length) {
+        $('.tab_view').hide();
+        $targetTab.show();
+    }
 }
 SCRIPT
 , CClientScript::POS_HEAD);

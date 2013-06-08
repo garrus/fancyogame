@@ -15,7 +15,12 @@ class CollectionTest extends \CTestCase {
 
     public function testToJson(){
 
-        $res = new Resources(1,2,3,4);
+        $res = Resources::c(array(
+            'metal' => 1,
+            'crystal' => 2,
+            'gas' => 3,
+            'energy' => 4
+        ));
         $this->assertEquals(1, $res->metal);
         $this->assertEquals(2, $res->crystal);
         $this->assertEquals(3, $res->gas);
@@ -40,7 +45,12 @@ class CollectionTest extends \CTestCase {
         $this->assertEquals(0, $res->gas);
         $this->assertEquals(0, $res->energy);
 
-        $this->assertTrue($res->add(new Resources(1,2,3,4)));
+        $this->assertTrue($res->add(Resources::c(array(
+            'metal' => 1,
+            'crystal' => 2,
+            'gas' => 3,
+            'energy' => 4,
+        ))));
         $this->assertEquals(1, $res->metal);
         $this->assertEquals(2, $res->crystal);
         $this->assertEquals(3, $res->gas);
@@ -49,19 +59,22 @@ class CollectionTest extends \CTestCase {
 
     public function testSub(){
 
-        $res = new Resources(5,5,5,5);
+        $res = Resources::c(array('metal' => 5, 'crystal' => 5, 'gas' => 5, 'energy' => 5));
         $this->assertEquals(5, $res->metal);
         $this->assertEquals(5, $res->crystal);
         $this->assertEquals(5, $res->gas);
         $this->assertEquals(5, $res->energy);
 
-        $this->assertTrue($res->sub(new Resources(4,3,2,1)));
+        $this->assertTrue($res->sub(Resources::c(array('metal' => 4,
+            'crystal' => 3,
+            'gas' => 2,
+            'energy' => 1))));
         $this->assertEquals(1, $res->metal);
         $this->assertEquals(2, $res->crystal);
         $this->assertEquals(3, $res->gas);
         $this->assertEquals(4, $res->energy);
 
-        $this->assertFalse($res->sub(new Resources(100))); // metal would be negative
+        $this->assertFalse($res->sub(Resources::c(array('crystal' => 100)))); // metal would be negative
         $this->assertEquals(1, $res->metal);
         $this->assertEquals(2, $res->crystal);
         $this->assertEquals(3, $res->gas);
@@ -72,18 +85,21 @@ class CollectionTest extends \CTestCase {
     public function testTriggerOnChangeEvent(){
 
         $counter = 0;
-        $testcase = $this;
+        $testCase = $this;
 
-        $res = new Resources(5,5,5,5);
-        $res->onChange = function($event) use($testcase, $res, & $counter){
-            $testcase->assertEquals($res, $event->sender);
+        $res = Resources::c(array('metal' => 5, 'crystal' => 5, 'gas' => 5, 'energy' => 5));
+        $res->attachEventHandler('onChange', function($event) use($testCase, $res, & $counter){
+            $testCase->assertEquals($res, $event->sender);
             ++$counter;
-        };
+        });
 
-        $this->assertTrue($res->sub(new Resources(4,3,2,1)));
+        $this->assertTrue($res->sub(Resources::c(array('metal' => 4,
+            'crystal' => 3,
+            'gas' => 2,
+            'energy' => 1))));
         $this->assertEquals(1, $counter);
 
-        $this->assertFalse($res->sub(new Resources(100)));
+        $this->assertFalse($res->sub(Resources::c(array('metal' => 100))));
         $this->assertEquals(1, $counter, 'Unsuccessful operation won\'t trigger onChange event.');
     }
 

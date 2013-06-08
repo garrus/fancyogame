@@ -39,15 +39,6 @@ class ZPlanet extends \Planet {
         return parent::model($className);
     }
 
-    /**
-     *
-     * @return PlanetBuilder
-     */
-    public static function createPlanetBuilder(){
-
-        return new PlanetBuilder();
-    }
-
 
     /**
      *
@@ -321,7 +312,7 @@ class ZPlanet extends \Planet {
             $hours = Utils::getHours($lastUpdateTime->diff($tillTime));
            // if ($hours < 5 / 3600) return;
 
-            $resources = $this->resources;
+            $res = $this->resources;
             $buildings = $this->buildings;
             $energy_costs = $buildings->getEnergyCostPerHour(true);
             $energy_produce = $buildings->energyPerHour;// * $this->techs->energy_tech * 1.1;
@@ -344,11 +335,11 @@ class ZPlanet extends \Planet {
 
             $energy_diff = $hours * ($energy_produce - array_sum($energy_costs));
 
-            if ($energy_diff + $resources->energy > $buildings->getEnergyCapacity()){
-                $energy_diff = $buildings->getEnergyCapacity() - $resources->energy;
-            } elseif ($energy_diff < 0 && $energy_diff + $resources->energy < 0) {
-                $hours *= ($resources->energy + $energy_produce) / array_sum($energy_costs);
-                $energy_diff = -$resources->energy;
+            if ($energy_diff + $res->energy > $buildings->getEnergyCapacity()){
+                $energy_diff = $buildings->getEnergyCapacity() - $res->energy;
+            } elseif ($energy_diff < 0 && $energy_diff + $res->energy < 0) {
+                $hours *= ($res->energy + $energy_produce) / array_sum($energy_costs);
+                $energy_diff = -$res->energy;
             }
             // TODO take energy override tech into consideration
 
@@ -357,14 +348,30 @@ class ZPlanet extends \Planet {
             }, $prods);
             $res_diff['energy'] = $energy_diff;
 
+            $energy_capacity = $buildings->getEnergyCapacity();
+            $res_capacity = $buildings->getWarehouseCapacity();
+            $res_consumed = $res->metal + $res->crystal + $res->gas;
+            $new_res_place = $res_diff['metal'] + $res_diff['crystal'] + $res_diff['gas'];
+            if ($new_res_place != 0 && $new_res_place + $res_consumed > $res_capacity) {
+                // oh no, the production will be paused when capacity is totally occupied
+                if ($res_capacity > $res_consumed) {
+                    $prod_defactor = 1 - ($res_capacity - $res_consumed) / $new_res_place;
+                } else {
+                    $prod_defactor = 0;
+                }
+                $res_diff['metal'] *= $prod_defactor;
+                $res_diff['crystal'] *= $prod_defactor;
+                $res_diff['gas'] *= $prod_defactor;
+            }
+
             foreach ($res_diff as $item => $value) {
                 $res_diff[$item] = floor($value);
                 $res_diff[$item.'_decimal'] = intval(($value - floor($value)) * 100000);
             }
 
             $this->planetData->last_update_time = $tillTime->format('Y-m-d H:i:s');
-            if (false == $resources->modify($res_diff)) {
-                throw new ModelError($resources);
+            if (false == $res->modify($res_diff)) {
+                throw new ModelError($res);
             }
 
         }

@@ -1,9 +1,12 @@
 <?php
 /**
  * @var $data array
- * @var $factor number
+ * @var $factor float
+ * @var $energy_data array
+ * @var $res_data array
+ * @var $energy_capacity int
+ * @var $res_capacity int
  */
-
 ?>
 <div class="portlet_container" id="res-widget">
 	<ul class="nav nav-list">
@@ -61,14 +64,25 @@
             }
 
             echo CHtml::tag('span', $htmlOptions, $prod_label);
-            echo '</li>';
-        endforeach;?>
+            echo CHtml::closeTag('li');
+        endforeach;
+
+        $total_percent = array_sum($res_percent);
+        if ($total_percent != 0 && $total_percent > 100) {
+            array_walk($res_percent, function(&$val, $key) use($total_percent){
+                $val = round(100 * $val / $total_percent);
+            });
+        }
+        ?>
         <li>
-            <div class="progress" style="margin-top: 5px;margin-bottom: 0px;">
-                <div class="bar bar-danger" style="width:<?php echo $res_percent['Metal'];?>%;"></div>
-                <div class="bar bar-info" style="width:<?php echo $res_percent['Crystal'];?>%;"></div>
-                <div class="bar bar-success" style="width:<?php echo $res_percent['Gas'];?>%;"></div>
+            <div class="progress" style="margin-top: 5px;margin-bottom: 0;">
+                <div class="bar bar-danger" data-title="<?php printf('%s: %d / %d', 'Metal', $res_data[0]['storage'], $res_capacity);?>" style="width:<?php echo $res_percent['Metal'];?>%;"></div>
+                <div class="bar bar-info" data-title="<?php printf('%s: %d / %d', 'Crystal', $res_data[1]['storage'], $res_capacity);?>" style="width:<?php echo $res_percent['Crystal'];?>%;"></div>
+                <div class="bar bar-success" data-title="<?php printf('%s: %d / %d', 'Gas', $res_data[2]['storage'], $res_capacity);?>" style="width:<?php echo $res_percent['Gas'];?>%;"></div>
             </div>
         </li>
     </ul>
 </div>
+<script type="text/javascript">
+    $('#res-widget .progress').children('div.bar').tooltip({container: '#res-widget'});
+</script>
