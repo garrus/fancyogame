@@ -35,7 +35,8 @@ $this->widget('bootstrap.widgets.TbNavBar',array(
                 array('label' => 'Home', 'url' => array('/site/index')),
                 array('label' => 'Debug Menu', 'items' => array(
                     array('label' => 'Create Planet', 'url' => array('debug/createPlanet')),
-                    array('label' => 'Fill Resource', 'url' => array('debug/fillResource'))
+                    array('label' => 'Fill Resource', 'url' => array('debug/fillResource')),
+                    array('label' => 'Init Mother Planet', 'url' => array('debug/initMotherPlanet')),
                 )),
 
                 array('label' => 'My Planets', 'url' => array('planet/list'), 'items' => $planet_items),

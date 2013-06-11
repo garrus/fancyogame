@@ -19,23 +19,19 @@
                 'id' => 'energy-capacity-bar',
                 'title' => "{$energy_data['storage']} / {$energy_capacity}",
                 'data-type' => 'active',
-                'data-color' => 'warning'
             );
-            $energy_percent = $energy_capacity ? round(100 * $energy_data['storage'] / $energy_capacity) : 0;
-            if ($energy_percent < 30) {
-                $progressOptions['data-color'] = 'danger';
-            } elseif ($energy_percent > 70) {
-                $progressOptions['data-color'] = 'success';
-            }
-            $progressOptions['data-totaltime'] = round(($energy_capacity / $energyProdAbs) * 3600);
+
             if ($energy_data['prod'] > 0) {
                 $progressOptions['data-elapsedtime'] = round(($energy_data['storage'] / $energyProdAbs) * 3600);
+                $progressOptions['data-totaltime'] = round(($energy_capacity / $energyProdAbs) * 3600);
             } elseif ($energy_data['prod'] < 0) {
                 $progressOptions['data-inverse'] = 1;
                 $progressOptions['data-elapsedtime'] = round((($energy_capacity - $energy_data['storage']) / $energyProdAbs) * 3600);
+                $progressOptions['data-totaltime'] = round(($energy_capacity / $energyProdAbs) * 3600);
             } else {
                 $progressOptions['data-type'] = 'default';
-                $progressOptions['data-elapsedtime'] = round(($energy_data['storage'] / $energyProdAbs) * 3600);
+                $progressOptions['data-elapsedtime'] = 0;
+                $progressOptions['data-totaltime'] = PHP_INT_MAX;
             }
 
             $prod_class = 'label';
@@ -120,6 +116,14 @@
 </div>
 <script type="text/javascript">
     $('#res-warehouse-capacity').children('div.bar').tooltip({container: '#res-widget'});
-    $('#energy-capacity-bar').progressTimer();
+    $('#energy-capacity-bar').progressTimer({color: function(percent){
+        if (percent < 30) {
+            return 'danger';
+        } else if (percent > 70) {
+            return 'success';
+        } else {
+            return 'warning';
+        }
+    }});
     $('#energy-consume-timer').timer();
 </script>

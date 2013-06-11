@@ -20,6 +20,18 @@ class DebugController extends GameBaseController {
         ));
     }
 
+    public function actionInitMotherPlanet(){
+
+        $player = Yii::app()->actx->getPlayer();
+        foreach ($player->planets as $planet) {
+            $planet->delete();
+        }
+        $planet = PlanetHelper::createMotherPlanet($player);
+        Yii::app()->actx->switchPlanet($planet);
+        $this->planet = $planet;
+        $this->redirect(array('planet/home'));
+    }
+
     public function actionFillResource(){
         $planet = $this->planet;
         $buildings = $planet->buildings;

@@ -81,14 +81,15 @@ class Workflow extends CComponent {
      */
     public function run(){
 
+        $now = new DateTime;
         if (!$this->isRunning() && !$this->hasWork()) {
             Yii::getLogger()->log('No running task, and no pending task. Quit running.');
             // no running task, and no pending task
+            $this->_taskQueue->setLastRunTime($now);
             return;
         }
 
         // push task
-        $now = new DateTime;
         $nextTaskTime = $this->_taskQueue->getLastRunTime();
 
         while (true) {
@@ -132,6 +133,8 @@ class Workflow extends CComponent {
         while (!$this->_holdTaskQueue->isEmpty()) {
             $this->_taskQueue->enqueue($this->_holdTaskQueue->dequeue());
         }
+
+        $this->_taskQueue->setLastRunTime($now);
     }
 
     /**

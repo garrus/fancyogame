@@ -12,7 +12,8 @@ $.fn.extend($.fn, {
      * elapsedTime
      * totalTime
      * type [active] normal|striped|active
-     * color [default] default|info|success|warning|danger  or custom color
+     * color [default] default|info|success|warning|danger  or custom color, or a callback function that accept the
+     * percent as the only parameter and return one of the value above
      */
     progressTimer: function(options){
         this.each(function(index, elem){
@@ -34,43 +35,75 @@ $.fn.extend($.fn, {
             } else {
                 className += ' progress-striped active';
             }
-            if (typeof options.color == 'string') {
-                if (/^info|success|warning|danger$/.test(options.color)) {
-                    className += ' progress-' + options.color;
-                    options.color = '';
-                }
-            } else {
-                options.color = '';
-            }
-            that.toggleClass(className, true)
-                .html('<div class="bar" style="width: 0%;'+
-                    (options.color?'background-color: '+options.color+';':'')+'"></div>');
+            that.toggleClass(className, true).html('<div class="bar" style="width: 0%;"></div>');
 
+            if (typeof options.color !== 'function') {
+                _modifyByColor(that, options.color);
+            }
             var interval = (options.totaltime * 5);
-            if (interval < 500) interval = 500;
-            _updateInterval(that, new Date().getTime(), options.elapsedtime, options.totaltime, options.inverse==1, interval);
+            var args = {
+                '$elem': that,
+                'startTime' : new Date().getTime(),
+                'elapsedTime': options.elapsedtime,
+                'totalTime': options.totaltime,
+                'inverse': options.inverse==1,
+                'interval': interval < 500 ? 500 : interval,
+                'colorCallback': typeof options.color == 'function' ? options.color : undefined
+            };
+            _updateInterval.call(null, args);
         });
 
         /**
-         * @param $elem JQuery object
-         * @param startTime int millisecond
-         * @param elapsedTime int millisecond
-         * @param totalTime int second
-         * @param inverse boolean
-         * @param interval int millisecond
+         * @param args object
+         * $elem JQuery object
+         * startTime int millisecond
+         * elapsedTime int millisecond
+         * totalTime int second
+         * inverse boolean
+         * interval int millisecond
+         * colorCallback function
          * @private
          */
-        function _updateInterval($elem, startTime, elapsedTime, totalTime, inverse, interval){
+        function _updateInterval(args){
             var nowTime = new Date().getTime(); // millisecond
-            elapsedTime += nowTime - startTime;
-            var percent = elapsedTime / totalTime / 10;
-            $elem.children('div.bar').css('width', (inverse ? 100 - percent : percent) + '%');
+            args.elapsedTime += nowTime - args.startTime;
+            args.startTime = nowTime;
+            var percent = args.elapsedTime / args.totalTime / 10;
+            args.$elem.children('div.bar').css('width', (args.inverse ? 100 - percent : percent) + '%');
+            if (typeof args.colorCallback == 'function') {
+                _modifyByColor(args.$elem, args.colorCallback.apply(null, [percent]));
+            }
+
             if (percent < 100) {
                 setTimeout(function(){
-                    _updateInterval($elem, nowTime, elapsedTime, totalTime, inverse, interval);
-                }, interval);
+                    _updateInterval(args);
+                }, args.interval);
             } else {
-                $(document).trigger('progress-timer.ring', [$elem]);
+                $(document).trigger('progress-timer.ring', [args.$elem]);
+            }
+        }
+
+        /**
+         *
+         * @param $elem JQuery object
+         * @param color string
+         * @private
+         */
+        function _modifyByColor($elem, color){
+
+            var preDefinedColorMap = {
+                'info': 'progress-info',
+                'danger': 'progress-danger',
+                'warning': 'progress-warning',
+                'success': 'progress-success'
+            };
+            for (var key in preDefinedColorMap) {
+                $elem.toggleClass(preDefinedColorMap[key], color == key);
+            }
+            if (/^default|info|danger|warning|success$/.test(color)) {
+                $elem.children('.bar').css('background-color', '');
+            } else {
+                $elem.children('.bar').css('background-color', color);
             }
         }
 

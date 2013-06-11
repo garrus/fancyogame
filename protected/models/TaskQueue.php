@@ -55,6 +55,14 @@ class TaskQueue extends SplQueue {
     }
 
     /**
+     * @param DateTime $time
+     */
+    public function setLastRunTime($time){
+
+        $this->_lastRunTime = $time;
+    }
+
+    /**
      * Set task limit
      *
      * @param int $limit should be an positive integer

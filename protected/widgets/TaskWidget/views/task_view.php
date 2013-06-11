@@ -1,7 +1,8 @@
 <?php
 /**
- * @var $queue array
- * @var $running array
+ * @var $queue Task[]
+ * @var $running Task[]
+ * @var $this TaskWidget
  */
 $now = new DateTime();
 
@@ -18,7 +19,7 @@ if (count($queue) + count($running) == 0) return;
             $activeTime = Utils::ensureDateTime($task['activate_time'])->getTimestamp();
             ?>
         <li>
-            <label><?php echo $task['desc'];?></label>
+            <label><?php echo $this->getTaskDescription($task['type'], $task['target'], $task['amount']);?></label>
 
             <?php echo CHtml::link('', array('task/cancel', 'id' => $task['id']), array('class' => 'icon icon-remove icon-white'));?>
             <small class="muted">Finished in
@@ -48,7 +49,7 @@ if (count($queue) + count($running) == 0) return;
     <ol>
         <?php foreach ($queue as $task):?>
         <li>
-            <label><?php echo $task['desc'];?></label>
+            <label><?php echo $this->getTaskDescription($task['type'], $task['target'], $task['amount']);?></label>
             <!-- <small class="muted">Created on <?php echo $task['create_time'];?></small> -->
             <?php echo CHtml::link('', array('task/cancel', 'id' => $task['id']), array('class' => 'icon icon-remove icon-white'));?>
         </li>

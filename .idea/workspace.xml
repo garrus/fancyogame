@@ -7,21 +7,22 @@
     <file path="/Dummy.txt" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370924291866" ignored="false" />
     <file path="/a.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370702471342" ignored="false" />
     <file path="/CollectionTest.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370705280613" ignored="false" />
-    <file path="/a.dummy" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370706393743" ignored="false" />
+    <file path="/a.dummy" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370971246933" ignored="false" />
     <file path="/ResourceWidget.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370705749148" ignored="false" />
-    <file path="/res_view.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370952169716" ignored="false" />
-    <file path="/ZPlanet.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370706730678" ignored="false" />
+    <file path="/res_view.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370972897922" ignored="false" />
+    <file path="/ZPlanet.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370970250373" ignored="false" />
     <file path="/Buildings.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370805323222" ignored="false" />
-    <file path="/common.js" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370950996652" ignored="false" />
+    <file path="/common.js" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370972769131" ignored="false" />
     <file path="/Utils.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370806750603" ignored="false" />
-    <file path="/game.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370946494891" ignored="false" />
-    <file path="/task_view.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370948418008" ignored="false" />
-    <file path="/DebugController.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370946811156" ignored="false" />
-    <file path="/Workflow.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370966974572" ignored="false" />
-    <file path="/TaskQueue.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370955855333" ignored="false" />
+    <file path="/game.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370970701328" ignored="false" />
+    <file path="/task_view.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370974167577" ignored="false" />
+    <file path="/DebugController.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370974432199" ignored="false" />
+    <file path="/Workflow.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370973548494" ignored="false" />
+    <file path="/TaskQueue.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370970130845" ignored="false" />
     <file path="/TaskQueueTest.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370955884865" ignored="false" />
     <file path="/bootstrap.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370954446683" ignored="false" />
     <file path="/Techs.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370958169876" ignored="false" />
+    <file path="/TaskWidget.php" changelist="66bdce0a-d4ef-4bc6-8d1e-7ed25195f55c" time="1370974105450" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,25 +48,43 @@
       <file leaf-file-name="ZPlanet.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/protected/models/ZPlanet.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="101" column="35" selection-start="1580" selection-end="1580" vertical-scroll-proportion="-85.46154">
+            <state line="153" column="25" selection-start="2974" selection-end="2974" vertical-scroll-proportion="-10.076923">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DebugController.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/protected/modules/game/controllers/DebugController.php">
+      <file leaf-file-name="PlanetData.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/protected/models/ar/PlanetData.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="26" column="0" selection-start="535" selection-end="535" vertical-scroll-proportion="-4.230769">
+            <state line="148" column="7" selection-start="4004" selection-end="4004" vertical-scroll-proportion="-5.923077">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Techs.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/protected/models/Techs.php">
+      <file leaf-file-name="game.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/protected/views/layouts/game.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="33" selection-start="40" selection-end="40" vertical-scroll-proportion="-1.6923077">
+            <state line="28" column="24" selection-start="1212" selection-end="1212" vertical-scroll-proportion="-3.3846154">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="res_view.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/protected/widgets/ResourceWidget/views/res_view.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="15" column="17" selection-start="428" selection-end="428" vertical-scroll-proportion="-6.769231">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TaskWidget.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/protected/widgets/TaskWidget/TaskWidget.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="2" column="0" selection-start="42" selection-end="42" vertical-scroll-proportion="-1.6923077">
               <folding />
             </state>
           </provider>
@@ -74,43 +93,34 @@
       <file leaf-file-name="Workflow.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/protected/models/Workflow.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="130" column="51" selection-start="3560" selection-end="3560" vertical-scroll-proportion="-14.769231">
+            <state line="81" column="26" selection-start="1555" selection-end="1555" vertical-scroll-proportion="-4.769231">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TaskQueue.php" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/protected/models/TaskQueue.php">
+      <file leaf-file-name="task_view.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/protected/widgets/TaskWidget/views/task_view.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="125" column="1" selection-start="2770" selection-end="2770" vertical-scroll-proportion="0.65891474">
+            <state line="7" column="0" selection-start="108" selection-end="108" vertical-scroll-proportion="-5.923077">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TaskQueueTest.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/protected/tests/unit/TaskQueueTest.php">
+      <file leaf-file-name="DebugController.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/protected/modules/game/controllers/DebugController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="47" column="51" selection-start="1456" selection-end="1456" vertical-scroll-proportion="-4.923077">
+            <state line="32" column="5" selection-start="764" selection-end="764" vertical-scroll-proportion="0.69473684">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="bootstrap.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/protected/tests/bootstrap.php">
+      <file leaf-file-name="PlanetHelper.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/protected/utils/PlanetHelper.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1" column="0" selection-start="6" selection-end="6" vertical-scroll-proportion="-0.84615386">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PlanetHelperTest.php" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/protected/tests/unit/PlanetHelperTest.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0">
+            <state line="16" column="27" selection-start="266" selection-end="266" vertical-scroll-proportion="-7.6153846">
               <folding />
             </state>
           </provider>
@@ -119,16 +129,7 @@
       <file leaf-file-name="Task.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/protected/models/ar/Task.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="245" column="33" selection-start="5990" selection-end="5990" vertical-scroll-proportion="-14.384615">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="application.log" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/protected/runtime/application.log">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="5710" column="0" selection-start="541673" selection-end="541673" vertical-scroll-proportion="0.0">
+            <state line="24" column="10" selection-start="600" selection-end="600" vertical-scroll-proportion="-7.3076925">
               <folding />
             </state>
           </provider>
@@ -152,22 +153,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/protected/modules/game/views/planet/home.php" />
-        <option value="$PROJECT_DIR$/protected/utils/Utils.php" />
-        <option value="$PROJECT_DIR$/protected/models/ZPlanet.php" />
-        <option value="$PROJECT_DIR$/protected/views/layouts/game.php" />
         <option value="$PROJECT_DIR$/protected/modules/game/controllers/PlanetController.php" />
-        <option value="$PROJECT_DIR$/protected/widgets/TaskWidget/views/task_view.php" />
-        <option value="$PROJECT_DIR$/js/common.js" />
-        <option value="$PROJECT_DIR$/protected/models/Buildings.php" />
-        <option value="$PROJECT_DIR$/protected/widgets/ResourceWidget/views/res_view.php" />
         <option value="$PROJECT_DIR$/protected/runtime/application.log" />
         <option value="$PROJECT_DIR$/protected/tests/bootstrap.php" />
         <option value="$PROJECT_DIR$/protected/tests/unit/TaskQueueTest.php" />
-        <option value="$PROJECT_DIR$/protected/models/TaskQueue.php" />
-        <option value="$PROJECT_DIR$/protected/modules/game/controllers/DebugController.php" />
         <option value="$PROJECT_DIR$/protected/models/Techs.php" />
+        <option value="$PROJECT_DIR$/protected/models/TaskQueue.php" />
+        <option value="$PROJECT_DIR$/protected/models/ZPlanet.php" />
+        <option value="$PROJECT_DIR$/protected/views/layouts/game.php" />
+        <option value="$PROJECT_DIR$/js/common.js" />
+        <option value="$PROJECT_DIR$/protected/widgets/ResourceWidget/views/res_view.php" />
+        <option value="$PROJECT_DIR$/protected/models/Buildings.php" />
         <option value="$PROJECT_DIR$/protected/models/Workflow.php" />
+        <option value="$PROJECT_DIR$/protected/models/ar/Task.php" />
+        <option value="$PROJECT_DIR$/protected/widgets/TaskWidget/TaskWidget.php" />
+        <option value="$PROJECT_DIR$/protected/widgets/TaskWidget/views/task_view.php" />
+        <option value="$PROJECT_DIR$/protected/modules/game/controllers/DebugController.php" />
       </list>
     </option>
   </component>
@@ -178,8 +179,8 @@
     </include_path>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="16" />
-    <option name="y" value="11" />
+    <option name="x" value="38" />
+    <option name="y" value="8" />
     <option name="width" value="1900" />
     <option name="height" value="1040" />
   </component>
@@ -337,196 +338,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="widgets" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="TaskWidget" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="protected" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="widgets" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="TaskWidget" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="protected" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="widgets" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ResourceWidget" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="protected" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="widgets" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ResourceWidget" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="protected" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="widgets" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="protected" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="protected" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="layouts" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="protected" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="tests" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="protected" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="runtime" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="protected" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="modules" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -558,38 +369,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="controllers" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="protected" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="models" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="fancyogame" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="js" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -692,7 +471,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="16" y="11" width="1900" height="1040" extended-state="0" />
+    <frame x="38" y="8" width="1900" height="1040" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -703,7 +482,7 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28896472" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28896472" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -774,78 +553,13 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="1" />
+      <option name="time" value="2" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/protected/models/Buildings.php">
+    <entry file="file://$PROJECT_DIR$/protected/models/TaskQueue.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="85" column="7" selection-start="2315" selection-end="2315" vertical-scroll-proportion="-3.7307692">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/common.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="93" column="49" selection-start="3482" selection-end="3482" vertical-scroll-proportion="0.0">
-          <folding>
-            <marker date="1370952280695" expanded="true" signature="-1:-1" placeholder="..." />
-            <marker date="1370952280695" expanded="true" signature="-1:-1" placeholder="..." />
-            <marker date="1370952280695" expanded="false" signature="-1:-1" placeholder="..." />
-            <marker date="1370952280695" expanded="true" signature="-1:-1" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/protected/widgets/TaskWidget/views/task_view.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="64" selection-start="864" selection-end="864" vertical-scroll-proportion="-13.076923">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/protected/widgets/ResourceWidget/views/res_view.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="5" selection-start="5" selection-end="5" vertical-scroll-proportion="-0.0">
-          <folding>
-            <element signature="n#style#0;n#div#0;n#li#1;n#ul#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#0;n#li#1;n#ul#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#1;n#div#0;n#li#1;n#ul#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#2;n#div#0;n#li#1;n#ul#0;n#div#0;n#!!top" expanded="true" />
-            <marker date="1370952815367" expanded="true" signature="-1:-1" placeholder="..." />
-            <marker date="1370952815367" expanded="true" signature="-1:-1" placeholder="..." />
-            <marker date="1370952815367" expanded="true" signature="-1:-1" placeholder="..." />
-            <marker date="1370952815367" expanded="true" signature="-1:-1" placeholder="..." />
-            <marker date="1370952815367" expanded="true" signature="-1:-1" placeholder="..." />
-            <marker date="1370952815367" expanded="true" signature="-1:-1" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/protected/modules/game/controllers/TaskController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="0" selection-start="168" selection-end="168" vertical-scroll-proportion="-7.6153846">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/protected/modules/game/controllers/PlanetController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="81" column="5" selection-start="1798" selection-end="1798" vertical-scroll-proportion="-17.076923">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/protected/models/ar/Task.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="245" column="33" selection-start="5990" selection-end="5990" vertical-scroll-proportion="-14.384615">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/protected/runtime/application.log">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5710" column="0" selection-start="541673" selection-end="541673" vertical-scroll-proportion="0.0">
+        <state line="62" column="5" selection-start="1099" selection-end="1099" vertical-scroll-proportion="-10.692307">
           <folding />
         </state>
       </provider>
@@ -857,51 +571,102 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/protected/tests/bootstrap.php">
+    <entry file="file://$PROJECT_DIR$/js/common.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="0" selection-start="6" selection-end="6" vertical-scroll-proportion="-0.84615386">
+        <state line="66" column="39" selection-start="2499" selection-end="2499" vertical-scroll-proportion="0.0">
+          <folding>
+            <marker date="1370972865617" expanded="true" signature="-1:-1" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/utils/Calculator.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="58" selection-start="128" selection-end="128" vertical-scroll-proportion="-4.230769">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/protected/tests/unit/TaskQueueTest.php">
+    <entry file="file://$PROJECT_DIR$/protected/models/Buildings.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="51" selection-start="1456" selection-end="1456" vertical-scroll-proportion="-4.923077">
+        <state line="58" column="5" selection-start="1596" selection-end="1596" vertical-scroll-proportion="-3.3076923">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/protected/modules/game/controllers/DebugController.php">
+    <entry file="file://$PROJECT_DIR$/protected/models/ar/PlanetData.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="0" selection-start="535" selection-end="535" vertical-scroll-proportion="-4.230769">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/protected/models/Techs.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="33" selection-start="40" selection-end="40" vertical-scroll-proportion="-1.6923077">
+        <state line="148" column="7" selection-start="4004" selection-end="4004" vertical-scroll-proportion="-5.923077">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/protected/models/ZPlanet.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="101" column="35" selection-start="1580" selection-end="1580" vertical-scroll-proportion="-85.46154">
+        <state line="153" column="25" selection-start="2974" selection-end="2974" vertical-scroll-proportion="-10.076923">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/models/ar/Task.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="10" selection-start="600" selection-end="600" vertical-scroll-proportion="-7.3076925">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/views/layouts/game.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="24" selection-start="1212" selection-end="1212" vertical-scroll-proportion="-3.3846154">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/widgets/ResourceWidget/views/res_view.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="17" selection-start="428" selection-end="428" vertical-scroll-proportion="-6.769231">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/widgets/TaskWidget/TaskWidget.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="0" selection-start="42" selection-end="42" vertical-scroll-proportion="-1.6923077">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/protected/models/Workflow.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="130" column="51" selection-start="3560" selection-end="3560" vertical-scroll-proportion="-14.769231">
+        <state line="81" column="26" selection-start="1555" selection-end="1555" vertical-scroll-proportion="-4.769231">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/protected/models/TaskQueue.php">
+    <entry file="file://$PROJECT_DIR$/protected/widgets/TaskWidget/views/task_view.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="125" column="1" selection-start="2770" selection-end="2770" vertical-scroll-proportion="0.65891474">
+        <state line="7" column="0" selection-start="108" selection-end="108" vertical-scroll-proportion="-5.923077">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/appcomponents/AppContext.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-3.3578947">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/utils/PlanetHelper.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="27" selection-start="266" selection-end="266" vertical-scroll-proportion="-7.6153846">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protected/modules/game/controllers/DebugController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="32" column="5" selection-start="764" selection-end="764" vertical-scroll-proportion="0.69473684">
           <folding />
         </state>
       </provider>

@@ -119,7 +119,7 @@ class ZPlanet extends \Planet {
 	        $taskQueue->onTaskDeleted = array($this, 'dropTask');
 	        return $this->_taskQueue = $taskQueue;
     	}
-    	return $this->_taskQueue;
+        return $this->_taskQueue;
     }
 
     public function dropTask(Task $task, $delete=false){
@@ -150,19 +150,18 @@ class ZPlanet extends \Planet {
     public function addNewTask($type, $target, $amount=1){
 
     	$workflow = $this->getWorkflow();
-    	if ($workflow->isRunning()) {
+    	if (!$workflow->isRunning()) {
     		$workflow->run();
-    	}
+    	} else {
+            $this->updateResources(new DateTime);
+        }
 
-    	$taskQueue = $this->getTaskQueue();
-
+        $taskQueue = $this->getTaskQueue();
     	if ($taskQueue->isFull()) {
     	    Yii::app()->user->setFlash('error_task_failed_to_added', 'You have reached your task queue\'s length limit.');
     	    return;
     	} else {
-
     	    Yii::getLogger('Task queue count: '. $taskQueue->count(), ', limit is '. $this->getTechs()->getPendingTaskLimit(), 'warning');
-
     	}
 
     	if (TechTree::checkRequirement($this, $type, $target, $amount)) {
@@ -348,7 +347,6 @@ class ZPlanet extends \Planet {
             }, $prods);
             $res_diff['energy'] = $energy_diff;
 
-            $energy_capacity = $buildings->getEnergyCapacity();
             $res_capacity = $buildings->getWarehouseCapacity();
             $res_consumed = $res->metal + $res->crystal + $res->gas;
             $new_res_place = $res_diff['metal'] + $res_diff['crystal'] + $res_diff['gas'];
