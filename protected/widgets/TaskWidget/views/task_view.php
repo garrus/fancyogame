@@ -11,21 +11,34 @@ if (count($queue) + count($running) == 0) return;
 <div class="portlet_container" id="task-widget">
     <?php if (count($running)):?>
     <ol>
-        <?php foreach ($running as $task):?>
+        <?php
+        $now = time();
+        foreach ($running as $task):
+            $endTime = Utils::ensureDateTime($task['end_time'])->getTimestamp();
+            $activeTime = Utils::ensureDateTime($task['activate_time'])->getTimestamp();
+            ?>
         <li>
             <label><?php echo $task['desc'];?></label>
 
             <?php echo CHtml::link('', array('task/cancel', 'id' => $task['id']), array('class' => 'icon icon-remove icon-white'));?>
             <small class="muted">Finished in
-                <span class="badge badge-inverse">
-                    <?php echo Utils::formatDiff($task['end_time']);?>
-                </span>
+            <?php
+                echo CHtml::tag('span', array(
+                    'class' => 'task-timer badge badge-inverse',
+                    'data-inverse' => '1',
+                    'data-time' => $endTime - $now,
+                ))
+            ?>
             </small>
-            <div class="progress progress-striped active">
-                <div class="bar" style="width: <?php echo Utils::timelinePercentage($task['activate_time'], $task['end_time']);?>%;">
-                </div>
-
-            </div>
+            <?php
+                echo CHtml::tag('div', array(
+                    'class' => 'task-progress-bar',
+                    'data-type' => 'active',
+                    'data-elapsedtime' => $now - $activeTime,
+                    'data-totaltime' => $endTime - $activeTime,
+                    'data-taskId' => $task['id']
+                ));
+            ?>
         </li>
         <?php endforeach;?>
     </ol>
@@ -44,3 +57,11 @@ if (count($queue) + count($running) == 0) return;
     <?php endif;?>
 
 </div>
+
+<script type="text/javascript">
+    $('.task-progress-bar').progressTimer();
+    $('.task-timer').timer();
+    $(document).bind('progress-timer.ring', function(e, data){
+        if (data.hasClass('task-progress-bar')) location.reload();
+    });
+</script>

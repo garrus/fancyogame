@@ -5,7 +5,10 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="language" content="en" />
     <?php Yii::app()->bootstrap->register();?>
-    <?php Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl. '/css/game.css');?>
+    <?php $cs = Yii::app()->clientScript;
+    $cs->registerCssFile(Yii::app()->baseUrl. '/css/game.css');
+    $cs->registerScriptFile(Yii::app()->baseUrl. '/js/common.js');
+    ?>
 	<title><?php echo CHtml::encode($this->pageTitle); ?></title>
 </head>
 
@@ -30,7 +33,11 @@ $this->widget('bootstrap.widgets.TbNavBar',array(
             'htmlOptions' => array('class' => 'pull-right'),
             'items' =>array(
                 array('label' => 'Home', 'url' => array('/site/index')),
-                array('label' => 'Create Planet', 'url' => array('planet/create')),
+                array('label' => 'Debug Menu', 'items' => array(
+                    array('label' => 'Create Planet', 'url' => array('debug/createPlanet')),
+                    array('label' => 'Fill Resource', 'url' => array('debug/fillResource'))
+                )),
+
                 array('label' => 'My Planets', 'url' => array('planet/list'), 'items' => $planet_items),
             ),
         )

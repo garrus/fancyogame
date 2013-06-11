@@ -100,19 +100,27 @@ class Utils {
             $_datetime = new DateTime;
         }
         $hours = self::getHours($datetime->diff($_datetime));
+        return self::formatHours($hours);
+    }
 
+    public static function formatHours($hours, $toSecond=true){
         $seconds = intval(($hours - floor($hours)) * 3600);
         $hours = floor($hours);
         $minutes = floor($seconds / 60);
         $seconds = $seconds % 60;
         if ($hours) {
+            if (!$toSecond) {
+                return sprintf('%dh %dm', $hours, $minutes);
+            }
             return sprintf('%dh %dm %ds', $hours, $minutes, $seconds);
         } elseif ($minutes) {
+            if (!$toSecond) {
+                return sprintf('%dm', $minutes);
+            }
             return sprintf('%dm %ds', $minutes, $seconds);
         } else {
             return sprintf('%ds', $seconds);
         }
-
     }
 
 

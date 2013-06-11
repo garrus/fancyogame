@@ -17,21 +17,38 @@ class TaskQueue extends SplQueue {
      */
     private $_lastRunTime;
 
-
+    /**
+     * @var int
+     */
     private $_pendingTaskCount = 0;
 
+    /**
+     * @param array $tasks
+     * @param DateTime $lastRunTime
+     */
     public function __construct(array $tasks, DateTime $lastRunTime){
 
     	foreach ($tasks as $task) {
     		$this->enqueue($task);
-    		if (!$task->isActivated()) {
-    		    ++$this->_pendingTaskCount;
-    		}
     	}
     	$this->_lastRunTime = $lastRunTime;
 
     }
 
+    /**
+     * @return Task
+     */
+    public function dequeue(){
+        $task = parent::dequeue();
+        if (!$task->isActivated()) {
+            --$this->_pendingTaskCount;
+        }
+        return $task;
+    }
+
+    /**
+     * @return DateTime
+     */
     public function getLastRunTime(){
 
     	return $this->_lastRunTime;
@@ -40,7 +57,7 @@ class TaskQueue extends SplQueue {
     /**
      * Set task limit
      *
-     * @param int $limit
+     * @param int $limit should be an positive integer
      * @throws InvalidArgumentException
      */
     public function setLimit($limit){
@@ -63,29 +80,24 @@ class TaskQueue extends SplQueue {
     }
 
     /**
-     * (non-PHPdoc)
-     * @see SplQueue::enqueue()
-     */
-    public function enqueue($value){
-
-        if ($this->isFull()) {
-            throw new BadMethodCallException('This task queue has reached its length limit.');
-        }
-
-        if ($value instanceof Task) {
-            $this->push($value);
-        } else {
-            throw new InvalidArgumentException('Expecting parameter 1 to be a WorkflowTask, '. gettype($value). ' given.');
-        }
-    }
-
-    /**
-     * (non-PHPdoc)
      * @param Task $task
-     * @see SplQueue::push()
+     * @throws InvalidArgumentException
+     * @throws BadMethodCallException
      */
-    public function push($task){
-        parent::push($task);
+    public function enqueue($task){
+
+        if (!$task instanceof Task) {
+            throw new InvalidArgumentException('Expecting parameter 1 to be a Task, '. gettype($task). ' given.');
+        }
+
+        if (!$task->isActivated()) {
+            if ($this->isFull()) {
+                throw new BadMethodCallException('This task queue has reached its length limit.');
+            }
+            ++$this->_pendingTaskCount;
+        }
+        parent::enqueue($task);
+
         $task->attachEventHandler('onAfterDelete', array($this, 'onTaskDeleted'));
     }
 
@@ -107,18 +119,8 @@ class TaskQueue extends SplQueue {
      *
      * @param WorkflowTaskEvent $event
      */
-    public function taskActivate($event){
-        --$this->_pendingTaskCount;
-    }
-
-    /**
-     *
-     * @param WorkflowTaskEvent $event
-     */
     public function taskComplete($event){
-
     	$this->_lastRunTime = $event->datetime;
-
     }
 
 }

@@ -1,7 +1,6 @@
 <?php
 /**
  *
- *
  * @property Resources $resources
  * @property Techs $techs
  * @property Buildings $buildings
@@ -246,7 +245,7 @@ class ZPlanet extends \Planet {
 
     /**
      *
-     * @param Task $task
+     * @internal param \Task $task
      * @return TaskExecutorChain
      */
     private function createTaskExecutorChain(){
@@ -267,6 +266,7 @@ class ZPlanet extends \Planet {
     /**
      *
      * @param WorkflowTaskEvent $event
+     * @throws Exception
      */
     public function taskStageChange($event){
 

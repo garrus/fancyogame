@@ -25,18 +25,23 @@ class Workflow extends CComponent {
      */
     private $_maxWorkingUnit=3;
 
+    private $_holdTaskQueue;
+
 
     /**
      *
-     * @param ZPlanet $planet
+     * @param TaskQueue $taskQueue
+     * @param TaskExecutorChain $chain
+     * @param int $maxWorkingUnit
+     * @internal param \ZPlanet $planet
      */
     public function __construct(TaskQueue $taskQueue, TaskExecutorChain $chain, $maxWorkingUnit=3){
 
         $this->_taskQueue = $taskQueue;
         $this->_executorChain = $chain;
         $this->_maxWorkingUnit = $maxWorkingUnit;
+        $this->_holdTaskQueue = new SplQueue;
         $this->attachEventHandler('onCompleteTask', array($taskQueue, 'taskComplete'));
-        $this->attachEventHandler('onAfterActivateTask', array($taskQueue, 'taskActivate'));
     }
 
     /**
@@ -109,7 +114,6 @@ class Workflow extends CComponent {
                 if ($nextTaskTime >= $taskEndTime) {
                     $nextTaskTime = $taskEndTime;
                     $nextFinishedTask = $task;
-                    $taskIndex = $index;
                 }
             }
 
@@ -124,6 +128,10 @@ class Workflow extends CComponent {
             }
         }
 
+        // we'll append all hold task to task queue
+        while (!$this->_holdTaskQueue->isEmpty()) {
+            $this->_taskQueue->enqueue($this->_holdTaskQueue->dequeue());
+        }
     }
 
     /**
@@ -146,6 +154,7 @@ class Workflow extends CComponent {
                 } else {
                     Yii::getLogger()->log('Task "'. $task->getDescription(). '" is not activated because of conflict.');
                     Yii::app()->user->setFlash('notice_task_dropped', 'Task "'. $task->getDescription(). '" is dropped because there is a same task in the running.');
+                    $this->_holdTaskQueue->enqueue($task);
                 }
             }
         }
@@ -164,7 +173,7 @@ class Workflow extends CComponent {
             }
 
             $this->onAfterActivateTask($task);
-            Yii::getLogger()->log('Task "'. $task->getDescription(). '" activated on '. $task->activate_time);
+            Yii::getLogger()->log('Task "'. $task->getDescription(). '" activated on '. $task->activate_time. ', end on '. $task->end_time);
 
             return true;
     	} else {
@@ -206,7 +215,10 @@ class Workflow extends CComponent {
 
     public function onCompleteTask(Task $task){
 
-
+        // whenever we complete a task, we append all hold task to task queue
+        while (!$this->_holdTaskQueue->isEmpty()) {
+            $this->_taskQueue->enqueue($this->_holdTaskQueue->dequeue());
+        }
 
         $event = new WorkflowTaskEvent($this, $task);
         $this->raiseEvent('onCompleteTask', $event);

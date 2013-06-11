@@ -70,7 +70,7 @@ class Buildings extends \Collection {
 
     public function getWarehouseCapacity(){
 
-        return 20000 + 20000 * Calculator::level_pow($this->warehouse, 1.2);
+        return 20000 + 20000 * Calculator::level_pow($this->warehouse, 1.5);
     }
 
     /**
@@ -80,7 +80,7 @@ class Buildings extends \Collection {
      */
     public function getWorkRate(){
 
-        return round(30000 + 8000 * Calculator::level_pow($this->robot_factory));
+        return round(30000 + 10000 * Calculator::level_pow($this->robot_factory, 1.2));
     }
 
     /**
@@ -90,13 +90,13 @@ class Buildings extends \Collection {
      */
     public function getResearchRate(){
 
-        return round(1000 + 3000 * Calculator::level_pow($this->lab, 1.05));
+        return round(1000 + 3000 * Calculator::level_pow($this->lab, 1.1));
     }
 
 
     public function getEnergyCapacity(){
 
-        return round(200 * Calculator::level_pow($this->solar_plant, 1.05));
+        return round(75 * Calculator::level_pow($this->solar_plant, 1.02));
     }
 
     /**

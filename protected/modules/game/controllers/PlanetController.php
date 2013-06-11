@@ -90,32 +90,5 @@ class PlanetController extends GameBaseController {
     }
 
 
-    public function actionCreate(){
-
-        Gen_Location:
-        $hex = md5(microtime());
-        $i = 0;
-        do {
-            $location = new Location(
-                hexdec($hex[$i++]) + 1,
-                hexdec($hex[$i++]. $hex[$i++]) + 1,
-                mt_rand(4, 13)
-            );
-
-            $planet = $location->findPlanet();
-            if (!$planet || self::isPlanetTouched($planet)) {
-                break;
-            } else {
-                $location = null;
-            }
-        } while ($i < 30);
-
-        if (!$location) {
-            goto Gen_Location;
-        }
-        $planet = PlanetHelper::createPlanetAtLocation($location);
-        PlanetHelper::setPlanetOwner($planet, $this->player);
-        $this->redirect(array('list'));
-    }
 
 }

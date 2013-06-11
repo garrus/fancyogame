@@ -5,7 +5,7 @@ class Techs extends \Collection {
 
     public function getPendingTaskLimit(){
 
-        return 3;
+        return $this->computer;
     }
 
 

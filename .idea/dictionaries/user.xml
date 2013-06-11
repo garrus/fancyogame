@@ -2,6 +2,9 @@
   <dictionary name="user">
     <words>
       <w>defactor</w>
+      <w>dequeue</w>
+      <w>elapsedtime</w>
+      <w>totaltime</w>
     </words>
   </dictionary>
 </component>
