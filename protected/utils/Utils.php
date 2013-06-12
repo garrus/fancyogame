@@ -158,6 +158,14 @@ class Utils {
     }
 
 
+    /**
+     * Calculate how much time is occupied between the begin and end point
+     *
+     * @param $time1
+     * @param $time2
+     * @param null $now
+     * @return int
+     */
     public static function timelinePercentage($time1, $time2, $now=null){
 
         if (!is_int($time1)) {
@@ -166,18 +174,20 @@ class Utils {
         if (!is_int($time2)) {
             $time2 = self::ensureDateTime($time2)->getTimestamp();
         }
-        if (!$now) {
-            $now = time();
-        } elseif (!is_int($now)) {
-            $now = self::ensureDateTime($now)->getTimestamp();
-        }
 
         if ($time2 == $time1) {
             return 100;
         }
 
-        return round(100 * ($now - $time1) / ($time2 - $time1));
+        if ($now === null) {
+            $now = time();
+        } elseif (!is_int($now)) {
+            $now = self::ensureDateTime($now)->getTimestamp();
+        }
 
+        if ($now > $time2) return 100;
+        if ($now < $time1) return 0;
+        return round(100 * ($now - $time1) / ($time2 - $time1));
     }
 
 }

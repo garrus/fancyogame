@@ -181,10 +181,13 @@ class ZPlanet extends \Planet {
     public function cancelTask($id){
 
         $workflow = $this->getWorkflow();
-        if ($workflow->isRunning()) {
+        if (!$workflow->isRunning()) {
             $workflow->run();
+        } else {
+            $this->updateResources(new DateTime);
         }
 
+        /** @var Task $task */
         $task = Task::model()->findByPk($id);
         if ($task) {
             if ($task->isActivated()) {
@@ -192,25 +195,17 @@ class ZPlanet extends \Planet {
                 $timeline_percent = Utils::timelinePercentage($task->activate_time, $task->end_time);
 
                 if ($timeline_percent != 0) {
-                    $factor = $timeline_percent / 100;
+                    // not fully consumed. we need to return some resources
+                    $complete_factor = $timeline_percent / 100;
 
-                    switch ($task->getType()) {
-                        case Task::TYPE_CONSTRUCT:
-                            $this->resources->add($consume_res->times($factor));
-                            break;
-                        case Task::TYPE_BUILD_SHIPS:
-                            $collection = $this->ships;
-                        case Task::TYPE_BUILD_DEFENCES:
-                            if (isset($collection)) {
-                                $collection = $this->defences;
-                            }
-                            $this->resources->add($consume_res->times($factor));
-                            $finished_count = floor($factor * $task->getAmount());
-                            $collection->modify($factor, $finished_count);
-                            break;
-                        case Task::TYPE_RESEARCH:
-                        default:
-                            break;
+                    $type = $task->type;
+                    if ($type != Task::TYPE_RESEARCH) {
+                        // the resources that should be returned
+                        $this->resources->add($consume_res->times(1 - $complete_factor));
+                    }
+                    if ($type == Task::TYPE_BUILD_SHIPS || $type == Task::TYPE_BUILD_DEFENCES) {
+                        $collection = $type == Task::TYPE_BUILD_SHIPS ? $this->ships : $this->defences;
+                        $collection->modify($task->target, floor($complete_factor * $task->getAmount()));
                     }
                 }
             }

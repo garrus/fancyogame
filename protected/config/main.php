@@ -70,7 +70,7 @@ $config = array(
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
 			'errorAction'=>'site/error',
-			'discardOutput' => false,
+			//'discardOutput' => false,
 		),
 		'log'=>array(
 			'class'=>'CLogRouter',

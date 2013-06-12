@@ -30,3 +30,10 @@
 #res-widget>ul>li>span.res_storage {
 	width: 70px;
 }
+
+input.item-amount-input {
+    color: black;
+    width: 75px;
+    line-height: 32px;
+    margin-left: 5px;
+}

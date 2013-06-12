@@ -76,6 +76,7 @@ abstract class Collection extends CFormModel implements JsonSerializable {
      * Construct from a json string
      *
      * @param string $json
+     * @throws InvalidArgumentException
      * @return Resources
      */
     public static function fromJson($json){
@@ -97,7 +98,7 @@ abstract class Collection extends CFormModel implements JsonSerializable {
      */
     public static function c($amounts){
 
-        $model = new Static;
+        $model = new Static();
         foreach ($amounts as $name => $value){
             $model->$name = $value;
         }
@@ -166,7 +167,8 @@ abstract class Collection extends CFormModel implements JsonSerializable {
 
     /**
      *
-     * @param numeric $multi
+     * @param number $multi
+     * @throws CException
      * @return Collection
      */
     public function times($multi){

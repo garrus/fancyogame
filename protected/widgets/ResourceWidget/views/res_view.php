@@ -30,8 +30,8 @@
                 $progressOptions['data-totaltime'] = round(($energy_capacity / $energyProdAbs) * 3600);
             } else {
                 $progressOptions['data-type'] = 'default';
-                $progressOptions['data-elapsedtime'] = 0;
-                $progressOptions['data-totaltime'] = PHP_INT_MAX;
+                $progressOptions['data-elapsedtime'] = $energy_data['storage'];
+                $progressOptions['data-totaltime'] = $energy_capacity;
             }
 
             $prod_class = 'label';

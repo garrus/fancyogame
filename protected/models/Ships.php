@@ -43,15 +43,14 @@ class Ships extends \Collection {
         );
     }
 
-
     /**
-     *
-     * @param string $item
+     * @param $item
+     * @param null|int $amount
      * @return Resources
      */
-    public function getItemConsume($item){
+    public function getItemConsume($item, $amount=null){
 
-        return self::getItemConsumeOfCount($item, $this->$item);
+        return self::getItemConsumeOfCount($item, $amount ?: $this->$item);
     }
 
     /**
@@ -62,7 +61,11 @@ class Ships extends \Collection {
      */
     public static function getItemConsumeOfCount($item, $count){
 
-        return Resources::c(array_map(function($v) use($count){return round($v * $count);}, self::$_consumes[$item]));
+        $consumes = array_intersect_key(self::$_consumes[$item], array('metal' => 0, 'crystal' => 0, 'gas' => 0));
+
+        return Resources::c(array_map(function ($v) use ($count) {
+            return round($v * $count);
+        }, $consumes));
     }
 
 }

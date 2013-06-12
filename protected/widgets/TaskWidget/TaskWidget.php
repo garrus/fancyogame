@@ -64,7 +64,7 @@ class TaskWidget extends \CWidget {
         $desc = sprintf('<small class="muted">%s</small> <em>%s</em>', $verb, ucwords(str_replace('_', ' ', $target)));
         if ($type == Task::TYPE_BUILD_DEFENCES
             || $type == Task::TYPE_BUILD_SHIPS) {
-            $desc .= '['. $amount. ']';
+            $desc .= ' ['. $amount. ']';
         }
 
         return $desc;
