@@ -1,5 +1,15 @@
 <?php
-
+/**
+ * Class Defences
+ * @property int rocket_launcher
+ * @property int light_laser
+ * @property int heavy_laser
+ * @property int gauss_cannon
+ * @property int neutron_cannon
+ * @property int plasma_cannon
+ * @property int light_shield
+ * @property int heavy_shield
+ */
 class Defences extends \Collection {
 
     private static $_consumes = array(

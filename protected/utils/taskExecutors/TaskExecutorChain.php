@@ -31,7 +31,6 @@ class TaskExecutorChain extends \CTypedList {
      * Constructor
      *
      * @param ZPlanet $planet
-     * @param Task $task
      */
     public function __construct(ZPlanet $planet) {
 
@@ -73,13 +72,13 @@ class TaskExecutorChain extends \CTypedList {
 
 
     /**
-     * Check if the resouce is enough for this task
+     * Check if the resource is enough for this task
      *
      * @param Task $task
      * @return boolean
      */
     public function checkResource(Task $task) {
-
+        /** @var Resources $resource */
         $resource = Utils::cleanClone($this->planet->resources);
         $consumed_resource = ResourceExecutor::getTaskConsume($task, $this->planet);
         if (!$resource->sub($consumed_resource)) {

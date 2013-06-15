@@ -11,7 +11,8 @@ class PlanetHelper {
      * Create mother planet for given player
      *
      * @param Player $player
-     * @throws CException if this player already owns planet
+     * @throws CException
+     * @throws Exception
      * @return Planet
      */
     public static function createMotherPlanet(Player $player){
@@ -53,7 +54,7 @@ class PlanetHelper {
             }
             self::setupMotherPlanet($player, $planet);
             $trans->commit();
-        } catch (Exception $e) {
+        } catch (CException $e) {
             $trans->rollback();
             throw $e;
         }
@@ -65,6 +66,7 @@ class PlanetHelper {
      *
      * @param Player $player
      * @param Planet $planet
+     * @throws ModelError
      */
     private static function setupMotherPlanet(Player $player, Planet $planet) {
 
@@ -114,6 +116,8 @@ class PlanetHelper {
      * Return if the planet is touched
      *
      * @param Planet $planet
+     * @param bool $ignoreFleet
+     * @return bool
      */
     public static function isPlanetTouched(Planet $planet, $ignoreFleet=false) {
 
@@ -140,6 +144,8 @@ class PlanetHelper {
      * Create a planet at given location
      *
      * @param Location $loc
+     * @throws ModelError
+     * @return \Planet
      */
     public static function createPlanetAtLocation($loc){
 
@@ -159,7 +165,7 @@ class PlanetHelper {
             throw new ModelError($planet);
         }
 
-        return $planet;
+        return ZPlanet::model()->findByPk($planet->id);
     }
 
 }

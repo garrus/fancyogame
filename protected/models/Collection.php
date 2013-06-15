@@ -98,7 +98,7 @@ abstract class Collection extends CFormModel implements JsonSerializable {
      */
     public static function c($amounts){
 
-        $model = new Static();
+        $model = new static();
         foreach ($amounts as $name => $value){
             $model->$name = $value;
         }
@@ -175,7 +175,7 @@ abstract class Collection extends CFormModel implements JsonSerializable {
 
         if ($multi > 0) {
             if ($multi != 1) {
-                array_walk($this->_amounts, function(&$value, $index) use($multi){
+                array_walk($this->_amounts, function(&$value) use($multi){
                     $value = round($multi * $value);
                 });
             }
@@ -223,9 +223,6 @@ abstract class Collection extends CFormModel implements JsonSerializable {
             throw new InvalidArgumentException('Expecting parameter 1 to be a string or array, '. gettype($name). ' given.');
         }
 
-        //CVarDumper::dump($stored_attrs, 10, true);
-       // CVarDumper::dump($this->_amounts, 10, true);
-
         if ($this->_amounts == $stored_attrs) {
             return true;
         }
@@ -247,7 +244,7 @@ abstract class Collection extends CFormModel implements JsonSerializable {
      */
     public function separate($amounts){
 
-        if (array_sum($amounts)) return new Static;
+        if (array_sum($amounts)) return new static;
 
         $stored_attrs = $this->_amounts;
         foreach ($amounts as $name => $value) {
@@ -259,7 +256,7 @@ abstract class Collection extends CFormModel implements JsonSerializable {
             return false;
         }
 
-        $model = Static::c($amounts);
+        $model = static::c($amounts);
         $this->onChange();
 
         return $model;

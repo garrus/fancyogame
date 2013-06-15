@@ -5,9 +5,9 @@ class TechTree {
     /**
      * Check the requirement and return error message
      *
+     * @param ZPlanet $planet
+     * @param $type
      * @param string $itemName
-     * @param Buildings $buildings
-     * @param Techs $techs
      * @return string  the error message. if the requirement
      * is matched, empty string will be returned.
      */
@@ -16,7 +16,7 @@ class TechTree {
         return '';
     }
 
-    private static $_requeriments = array(
+    private static $_requirements = array(
         // Batiments
         12 => array(   3 =>   5, 113 =>   3),
         15 => array(  14 =>  10, 108 =>  10),

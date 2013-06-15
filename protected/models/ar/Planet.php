@@ -151,6 +151,27 @@ class Planet extends CActiveRecord
 	    return $this;
 	}
 
+    /**
+     * @param int|Location $galaxy
+     * @param int|null $system
+     * @param int|null $position
+     * @return Planet|null
+     */
+    public function findByLocation($galaxy, $system=null, $position=null){
+
+        if (is_object($galaxy) && $galaxy instanceof Location) {
+            $system = $galaxy->gal;
+            $position = $galaxy->pos;
+            $galaxy = $galaxy->gal;
+        }
+
+        return $this->findByAttributes(array(
+            'galaxy' => $galaxy,
+            'system' => $system,
+            'position' => $position,
+        ));
+    }
+
 	/**
 	 * Return location in format of [galaxy, system, position]
 	 *
@@ -160,4 +181,20 @@ class Planet extends CActiveRecord
 
 	    return sprintf('[%d, %d, %d]', $this->galaxy, $this->system, $this->position);
 	}
+
+    /**
+     * @return int
+     */
+    public function getMineLimit(){
+
+        return $this->mine_limit * 10000;
+    }
+
+    /**
+     * @return int
+     */
+    public function getGasLimit(){
+
+        return $this->gas_production_rate * 10000;
+    }
 }

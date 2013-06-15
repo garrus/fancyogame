@@ -33,13 +33,13 @@ class Location {
     
     public function findPlanet(){
         
-        return Planet::model()->findByAttributes(array(
-            'galaxy' => $this->gal,
-            'system' => $this->sys,
-            'position' => $this->pos,
-            ));
+        return ZPlanet::model()->findByLocation($this);
     }
-    
+
+    /**
+     * @param Location $loc
+     * @return int
+     */
     public function distance(Location $loc){
         
         return 1;

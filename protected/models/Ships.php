@@ -1,11 +1,28 @@
 <?php
-
+/**
+ * Class Ships
+ *
+ * @property int $light_cargo
+ * @property int $heavy_cargo
+ * @property int $light_hunter
+ * @property int $heavy_hunter
+ * @property int $crusher
+ * @property int $battleship
+ * @property int $colonizer
+ * @property int $recycler
+ * @property int $probe
+ * @property int $bomber
+ * @property int $destroyer
+ * @property int $destructor
+ * @property int $battle_cruiser
+ * @property int $solar_satellite
+ */
 class Ships extends \Collection {
 
     private static $_consumes = array(
 
         'light_cargo' => array('metal' => 2000, 'crystal' => 2000, 'gas' => 0, 'energy' => 0, 'consumption' => 20 , 'speed' => 5000, 'capacity' => 5000),
-        'hevery_cargo' => array('metal' => 6000, 'crystal' => 6000, 'gas' => 0, 'energy' => 0, 'consumption' => 50 , 'speed' => 7500, 'capacity' => 25000),
+        'heavy_cargo' => array('metal' => 6000, 'crystal' => 6000, 'gas' => 0, 'energy' => 0, 'consumption' => 50 , 'speed' => 7500, 'capacity' => 25000),
         'light_hunter' => array('metal' => 3000, 'crystal' => 1000, 'gas' => 0, 'energy' => 0, 'consumption' => 20 , 'speed' => 12500, 'capacity' => 50),
         'heavy_hunter' => array('metal' => 6000, 'crystal' => 4000, 'gas' => 0, 'energy' => 0, 'consumption' => 75 , 'speed' => 10000, 'capacity' => 100),
         'crusher' => array('metal' => 20000, 'crystal' => 7000, 'gas' => 2000, 'energy' => 0, 'consumption' => 300 , 'speed' => 15000, 'capacity' => 800),
@@ -17,18 +34,19 @@ class Ships extends \Collection {
         'destroyer' => array('metal' => 0, 'crystal' => 2000, 'gas' => 500, 'energy' => 0, 'consumption' => 0 , 'speed' => 0, 'capacity' => 0),
         'destructor' => array('metal' => 60000, 'crystal' => 50000, 'gas' => 15000, 'energy' => 0, 'consumption' => 1000, 'speed' => 5000, 'capacity' => 2000),
         'battle_cruiser' => array('metal' => 30000, 'crystal' => 40000, 'gas' => 15000, 'energy' => 0, 'consumption' => 250 , 'speed' => 10000, 'capacity' => 750),
+        'solar_satellite' => array('metal' => 0, 'crystal' => 2000, 'gas' => 500, 'energy' => 0, 'consumption' => 0, 'speed' => 0, 'capacity' => 0),
+
     );
 
 
     /**
-     * (non-PHPdoc)
-     * @see CFormModel::attributeNames()
+     * @return array
      */
     public function attributeNames(){
 
         return array(
             'light_cargo',
-            'hevery_cargo',
+            'heavy_cargo',
             'light_hunter',
             'heavy_hunter',
             'crusher',
@@ -40,6 +58,7 @@ class Ships extends \Collection {
             'destroyer',
             'destructor',
             'battle_cruiser',
+            'solar_satellite',
         );
     }
 

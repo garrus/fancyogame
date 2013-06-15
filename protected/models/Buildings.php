@@ -38,66 +38,6 @@ class Buildings extends \Collection {
         );
     }
 
-    public function getProductionPerHour(){
-
-        return array(
-            'metal' => 30 * Calculator::level_pow($this->metal_refinery),
-            'crystal' => 20 * Calculator::level_pow($this->crystal_factory),
-            'gas' => 15 * Calculator::level_pow($this->gas_plant) - 3 * Calculator::level_pow($this->nuclear_plant, 1.05),
-        );
-    }
-
-    public function getEnergyCostPerHour($returnDetails=false){
-
-        $details = array(
-            'metal_refinery' => 10 * Calculator::level_pow($this->metal_refinery),
-            'crystal_factory' => 10 * Calculator::level_pow($this->crystal_factory),
-            'gas_plant' => 15 * Calculator::level_pow($this->gas_plant),
-        );
-
-        return $returnDetails ? $details : array_sum($details);
-    }
-
-    public function getEnergyPerHour($returnDetails=false){
-
-        $details = array(
-            'solar_planet' => 20 * Calculator::level_pow($this->solar_plant),
-            'nuclear_planet' => 30 * Calculator::level_pow($this->nuclear_plant, 1.2),
-            );
-        return $returnDetails ? $details : array_sum($details);
-    }
-
-
-    public function getWarehouseCapacity(){
-
-        return 20000 + 20000 * Calculator::level_pow($this->warehouse, 1.5);
-    }
-
-    /**
-     * Return how many materials a workflow can handle in an hour
-     *
-     * @return number
-     */
-    public function getWorkRate(){
-
-        return round(30000 + 10000 * Calculator::level_pow($this->robot_factory, 1.2));
-    }
-
-    /**
-     * Return how many materials a lab can handle in an hour
-     *
-     * @return number
-     */
-    public function getResearchRate(){
-
-        return round(1000 + 3000 * Calculator::level_pow($this->lab, 1.1));
-    }
-
-
-    public function getEnergyCapacity(){
-
-        return round(75 * Calculator::level_pow($this->solar_plant, 1.02));
-    }
 
     /**
      *

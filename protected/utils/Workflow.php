@@ -77,21 +77,23 @@ class Workflow extends CComponent {
 
     /**
      * Run!
-     *
+     * @param null|DateTime $tillDateTime if set, will only run to this time point
      */
-    public function run(){
+    public function run($tillDateTime=null){
 
-        $now = new DateTime;
+        if (!$tillDateTime) {
+            $tillDateTime = new DateTime;
+        }
         if (!$this->isRunning() && !$this->hasWork()) {
             Yii::getLogger()->log('No running task, and no pending task. Quit running.');
             // no running task, and no pending task
-            $this->_taskQueue->setLastRunTime($now);
+            $this->_taskQueue->setLastRunTime($tillDateTime);
             return;
         }
 
-        // push task
-        $nextTaskTime = $this->_taskQueue->getLastRunTime();
-
+        // if there is next task to be activated, this is the activate time
+        $activateTime = $this->_taskQueue->getLastRunTime()->format('Y-m-d H:i:s');
+        $tillTime = $tillDateTime->format('Y-m-d H:i:s');
         while (true) {
             // in every working loop, at most one task can be executed.
             // this task is the one that has the earliest end time among
@@ -101,75 +103,87 @@ class Workflow extends CComponent {
             // free working unit.
             while ($this->hasFreeWorkingUnit() && $this->hasWork()) {
                 // task will be activated and plant into working unit.
-                // if it cannot be activated, it will be dropped.
-                $this->sendInTask($nextTaskTime);
+                // if it cannot be activated, it will be dropped or hold.
+                $this->sendInTask($activateTime);
             }
 
-            // now let's find the earliest finished task
-            $nextTaskTime = $now;
-            $nextFinishedTask = null;
-            $taskIndex = null;
-            foreach ($this->_runningTasks as $index => $task) {
-                $taskEndTime = $task->getEndTime();
-
-                if ($nextTaskTime >= $taskEndTime) {
-                    $nextTaskTime = $taskEndTime;
-                    $nextFinishedTask = $task;
-                }
-            }
-
-            if ($nextTaskTime <= $now && $nextFinishedTask) {
-                Yii::getLogger()->log('Task "'. $nextFinishedTask->getDescription(). '" complete at '. $nextTaskTime->format('Y-d-d H:i:s'));
-                $this->completeTask($nextFinishedTask, $nextTaskTime);
+            // now let's find the earliest to-be-complete task
+            $task = $this->getEarliestCompleteTask($tillTime);
+            if ($task) {
+                $this->completeTask($task);
+                $activateTime = $task->end_time;
             } else {
-                Yii::getLogger()->log('No more tasks can be executed. Quit running.');
+                //Yii::getLogger()->log('No more tasks can be executed. Quit running.');
                 // no more task can be executed, so no more working unit can be released
                 // quit running loop
                 break;
             }
         }
 
-        // we'll append all hold task to task queue
-        while (!$this->_holdTaskQueue->isEmpty()) {
-            $this->_taskQueue->enqueue($this->_holdTaskQueue->dequeue());
+        $this->_taskQueue->setLastRunTime($tillDateTime);
+    }
+
+    /**
+     * Find the earliest to-be-complete task from the running ones
+     *
+     * @param null|string $tillTime Y-m-d H:i:s  if this parameter is set, the
+     * calculation time range is limited down to $tillTime
+     * @return null|Task
+     */
+    private function getEarliestCompleteTask($tillTime=null){
+
+        $completeTime = $tillTime;
+        $completeTask = null;
+        foreach ($this->_runningTasks as $task) {
+            /** @var Task $task */
+            if (!$completeTime || $completeTime >= $task->end_time) {
+                $completeTime = $task->end_time;
+                $completeTask = $task;
+            }
         }
 
-        $this->_taskQueue->setLastRunTime($now);
+        return $completeTask;
     }
 
     /**
      *
-     * @return Task
+     * @param string $activateTime Y-m-d H:i:s
      */
-    private function sendInTask(DateTime $activateTime){
+    private function sendInTask($activateTime){
 
         $task = $this->_taskQueue->dequeue();
         if ($task) {
             if ($task->isActivated()) {
-                return $this->_runningTasks[] = $task;
+                $this->_runningTasks[] = $task;
             } elseif ($this->activateTask($task, $activateTime)) {
-                return $this->_runningTasks[] = $task;
+                $this->_runningTasks[] = $task;
             } else {
                 if ($task->hasErrors()) {
                     Yii::getLogger()->log('Task "'. $task->getDescription(). '" dropped because of error: '. Utils::modelError($task), 'debug');
                     Yii::app()->user->setFlash('error_task_dropped', 'Task "'. $task->getDescription(). '" is dropped because of error: '. Utils::modelError($task));
                     $task->delete();
                 } else {
-                    Yii::getLogger()->log('Task "'. $task->getDescription(). '" is not activated because of conflict.');
+                    Yii::getLogger()->log('Task "'. $task->getDescription(). '" is on hold because another same task is running.');
                     Yii::app()->user->setFlash('notice_task_dropped', 'Task "'. $task->getDescription(). '" is dropped because there is a same task in the running.');
-                    $this->_holdTaskQueue->enqueue($task);
+                    $this->_taskQueue->holdTask($task);
                 }
             }
         }
     }
 
 
-    private function activateTask(Task $task, DateTime $activateTime){
+    /**
+     * @param Task $task
+     * @param string $activateTime Y-m-d H:i:s
+     * @return bool
+     * @throws ModelError
+     */
+    private function activateTask($task, $activateTime){
 
-    	if ($this->beforeActivateTask($task, $activateTime)) {
+    	if ($this->beforeActivateTask($task)) {
     	    $task->setScenario('activate');
     	    $task->is_running = 1;
-    	    $task->activate_time = $activateTime->format('Y-m-d H:i:s');
+    	    $task->activate_time = $activateTime;
     	    $this->_executorChain->runTask($task);
             if (!$task->save()) {
                 throw new ModelError($task);
@@ -184,7 +198,11 @@ class Workflow extends CComponent {
     	}
     }
 
-    protected function beforeActivateTask(Task $task, DateTime $dateTime){
+    /**
+     * @param Task $task
+     * @return bool
+     */
+    protected function beforeActivateTask($task){
 
         foreach ($this->_runningTasks as $running_task) {
             if ($task->hasConflictWith($running_task)) {
@@ -196,12 +214,18 @@ class Workflow extends CComponent {
     	return $this->_executorChain->checkResource($task);
     }
 
+    /**
+     * @param Task $task
+     */
     public function onAfterActivateTask($task){
 
         $event = new WorkflowTaskEvent($this, $task);
         $this->raiseEvent('onAfterActivateTask', $event);
     }
 
+    /**
+     * @param Task $task
+     */
     public function completeTask($task){
 
         $task->scenario = 'complete';
@@ -216,12 +240,14 @@ class Workflow extends CComponent {
         $this->onCompleteTask($task);
     }
 
-    public function onCompleteTask(Task $task){
+    /**
+     * @param Task $task
+     */
+    public function onCompleteTask($task){
 
         // whenever we complete a task, we append all hold task to task queue
-        while (!$this->_holdTaskQueue->isEmpty()) {
-            $this->_taskQueue->enqueue($this->_holdTaskQueue->dequeue());
-        }
+        $this->_taskQueue->releaseHoldTasks();
+        Yii::getLogger()->log('Task "'. $task->getDescription(). '" complete at '. $task->end_time);
 
         $event = new WorkflowTaskEvent($this, $task);
         $this->raiseEvent('onCompleteTask', $event);
@@ -244,7 +270,7 @@ class WorkflowTaskEvent extends CEvent{
      *
      * @param Workflow $sender
      * @param Task $task
-     * @param DateTime $dateTime
+     * @internal param \DateTime $dateTime
      */
     public function __construct(Workflow $sender, Task $task){
 

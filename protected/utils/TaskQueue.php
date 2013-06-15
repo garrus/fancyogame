@@ -23,6 +23,11 @@ class TaskQueue extends SplQueue {
     private $_pendingTaskCount = 0;
 
     /**
+     * @var array
+     */
+    private $_holdTasks = array();
+
+    /**
      * @param array $tasks
      * @param DateTime $lastRunTime
      */
@@ -32,7 +37,6 @@ class TaskQueue extends SplQueue {
     		$this->enqueue($task);
     	}
     	$this->_lastRunTime = $lastRunTime;
-
     }
 
     /**
@@ -44,6 +48,27 @@ class TaskQueue extends SplQueue {
             --$this->_pendingTaskCount;
         }
         return $task;
+    }
+
+    /**
+     * Put the task in hold queue
+     *
+     * @param Task $task
+     */
+    public function holdTask($task){
+        if (!$task->isActivated()) {
+            ++$this->_pendingTaskCount;
+        }
+        $this->_holdTasks[] = $task;
+    }
+
+    /**
+     * Append all told tasks to queue
+     */
+    public function releaseHoldTasks(){
+        foreach ($this->_holdTasks as $task) {
+            parent::enqueue($task);
+        }
     }
 
     /**

@@ -1,7 +1,25 @@
 <?php
 
+/**
+ * Class Techs
+ *
+ * @property int $spy
+ * @property int $computer
+ * @property int $military
+ * @property int $defence
+ * @property int $shield
+ * @property int $energy
+ * @property int $hyperspace
+ * @property int $combustion
+ * @property int $impulse_motor
+ * @property int $hyperspace_motor
+ * @property int $laser
+ * @property int $ionic
+ * @property int $buster
+ * @property int $intergalactic
+ * @property int $expedition
+ */
 class Techs extends \Collection {
-
 
     public function getPendingTaskLimit(){
 

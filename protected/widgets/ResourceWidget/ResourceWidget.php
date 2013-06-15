@@ -11,17 +11,15 @@ class ResourceWidget extends \CWidget {
     public function run(){
 
         $planet = $this->planet;
+        $resInfo = $planet->getResourceInfo();
         $res = $planet->resources;
-        $buildings = $planet->buildings;
-
-        $prods = $buildings->getProductionPerHour();
-        $energy_prod = $buildings->getEnergyPerHour();
-        $energy_cost = $buildings->getEnergyCostPerHour(false);
+        $prods = $resInfo['res_prod_rate'];
+        $energy_prod = $resInfo['energy_prod_rate'];
+        $energy_cost = array_sum($resInfo['energy_consume_rate']);
 
         $energy_data = array(
             'label' => 'Energy',
             'storage' => $res->energy,
-
             'prod' => $energy_prod - $energy_cost,
         );
 
@@ -42,11 +40,6 @@ class ResourceWidget extends \CWidget {
                 'prod' => $prods['gas'],
                 ),
             );
-
-
-        $energy_capacity = $buildings->getEnergyCapacity();
-        $res_capacity = $buildings->getWarehouseCapacity();
-
         $factor = 1;
         if ($energy_prod < $energy_cost && $res->energy < 1) {
             $factor = $energy_prod / $energy_cost;
@@ -58,8 +51,8 @@ class ResourceWidget extends \CWidget {
             'factor' => $factor,
             'energy_data' => $energy_data,
             'res_data' => $res_data,
-            'energy_capacity' => $energy_capacity,
-            'res_capacity' => $res_capacity,
+            'energy_capacity' => $resInfo['energy_capacity'],
+            'res_capacity' => $resInfo['res_capacity'],
         ));
     }
 

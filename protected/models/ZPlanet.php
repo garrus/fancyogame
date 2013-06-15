@@ -122,6 +122,12 @@ class ZPlanet extends \Planet {
         return $this->_taskQueue;
     }
 
+    /**
+     * Drop a task
+     *
+     * @param Task $task
+     * @param bool $delete
+     */
     public function dropTask(Task $task, $delete=false){
 
         if ($this->hasRelated('tasks')) {
@@ -140,7 +146,7 @@ class ZPlanet extends \Planet {
 
 
     /**
-     * Constructor
+     * Add a new task
      *
      * @param int $type
      * @param string $target
@@ -178,6 +184,11 @@ class ZPlanet extends \Planet {
     }
 
 
+    /**
+     * Cancel the specified task
+     *
+     * @param int $id
+     */
     public function cancelTask($id){
 
         $workflow = $this->getWorkflow();
@@ -296,78 +307,47 @@ class ZPlanet extends \Planet {
      * Update the resources of this planet to given time
      *
      * @param DateTime $tillTime
+     * @throws ModelError
      */
     protected function updateResources($tillTime) {
 
         $last_update_time = Utils::ensureDateTime($this->planetData->last_update_time);
         if ($tillTime > $last_update_time) {
 
-            $lastUpdateTime = clone $last_update_time;
-            $hours = Utils::getHours($lastUpdateTime->diff($tillTime));
-           // if ($hours < 5 / 3600) return;
-
-            $res = $this->resources;
-            $buildings = $this->buildings;
-            $energy_costs = $buildings->getEnergyCostPerHour(true);
-            $energy_produce = $buildings->energyPerHour;// * $this->techs->energy_tech * 1.1;
-
-            $prods = $buildings->productionPerHour;
-
-            if ($prods['metal'] + $prods['crystal'] > $this->mine_limit * 1000) {
-                $defactor = $this->mine_limit * 1000 / ($prods['metal'] + $prods['crystal']);
-                $prods['metal'] *= $defactor;
-                $prods['crystal'] *= $defactor;
-                $energy_costs['metal_refinery'] *= $defactor;
-                $energy_costs['crystal_factory'] *= $defactor;
-            }
-
-            if ($prods['gas'] > $this->gas_production_rate * 1000) {
-                $defactor = $this->gas_production_rate * 1000 / $prods['gas'];
-                $prods['gas'] *= $defactor;
-                $energy_costs['gas'] *= $defactor;
-            }
-
-            $energy_diff = $hours * ($energy_produce - array_sum($energy_costs));
-
-            if ($energy_diff + $res->energy > $buildings->getEnergyCapacity()){
-                $energy_diff = $buildings->getEnergyCapacity() - $res->energy;
-            } elseif ($energy_diff < 0 && $energy_diff + $res->energy < 0) {
-                $hours *= ($res->energy + $energy_produce) / array_sum($energy_costs);
-                $energy_diff = -$res->energy;
-            }
-            // TODO take energy override tech into consideration
-
-            $res_diff = array_map(function($rate) use($hours){
-                return $rate * $hours;
-            }, $prods);
-            $res_diff['energy'] = $energy_diff;
-
-            $res_capacity = $buildings->getWarehouseCapacity();
-            $res_consumed = $res->metal + $res->crystal + $res->gas;
-            $new_res_place = $res_diff['metal'] + $res_diff['crystal'] + $res_diff['gas'];
-            if ($new_res_place != 0 && $new_res_place + $res_consumed > $res_capacity) {
-                // oh no, the production will be paused when capacity is totally occupied
-                if ($res_capacity > $res_consumed) {
-                    $prod_defactor = 1 - ($res_capacity - $res_consumed) / $new_res_place;
-                } else {
-                    $prod_defactor = 0;
-                }
-                $res_diff['metal'] *= $prod_defactor;
-                $res_diff['crystal'] *= $prod_defactor;
-                $res_diff['gas'] *= $prod_defactor;
-            }
-
-            foreach ($res_diff as $item => $value) {
-                $res_diff[$item] = floor($value);
-                $res_diff[$item.'_decimal'] = intval(($value - floor($value)) * 100000);
-            }
-
             $this->planetData->last_update_time = $tillTime->format('Y-m-d H:i:s');
-            if (false == $res->modify($res_diff)) {
-                throw new ModelError($res);
-            }
 
+            $data = $this->getResourceInfo();
+
+            // planetData will be saved on success
+            $this->resources->update($data, Utils::getHours($last_update_time->diff($tillTime)));
         }
+    }
+
+    /**
+     * Get all information of planet about resource
+     *
+     * @return array
+     */
+    public function getResourceInfo(){
+
+        $b = $this->buildings;
+        $t = $this->techs;
+        $s = $this->ships;
+
+        $info = array();
+        $info['mine_limit'] = $this->getMineLimit();
+        $info['gas_limit'] = $this->getGasLimit();
+        $info['energy_prod_rate'] = Calculator::energy_prod_rate(
+            $b->solar_plant, $b->nuclear_plant, $s->solar_satellite, array(
+                'energy_tech' => $t->energy, 'planet_temperature' => $this->temperature));
+        $info['energy_capacity'] = Calculator::energy_capacity($b->solar_plant, $t->energy);
+        $info['energy_consume_rate'] = Calculator::energy_consume_rate_detail(
+            $b->metal_refinery, $b->crystal_factory, $b->gas_plant);
+        $info['res_prod_rate'] = Calculator::resource_prod_rate(
+            $b->metal_refinery, $b->crystal_factory, $b->gas_plant, $b->nuclear_plant);
+        $info['res_capacity'] = Calculator::resource_capacity($b->warehouse);
+
+        return $info;
     }
 
 }
