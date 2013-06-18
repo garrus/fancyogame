@@ -96,24 +96,32 @@ class PlayerData extends CActiveRecord
     	return parent::beforeSave();
 	}
 
+    public function regenerate(){
+
+        $this->_techs = null;
+        $this->techs = '';
+        $this->save(false);
+    }
 
 
 	private $_techs=null;
 
 
 	/**
-	 * @param Collection $name
-	 */
+	 * @param string $name
+     * @return Collection
+     */
 	public function getCollection($name){
 
 	    $_cache = '_'. $name;
 	    if (!$this->$_cache) {
-	        $classname = ucfirst($name);
+            /** @var Collection $obj */
+	        $className = ucfirst($name);
 
 	        if ($this->$name) {
-	            $obj = $this->$_cache = $classname::fromJson($this->$name);
+	            $obj = $this->$_cache = $className::fromJson($this->$name);
 	        } else {
-	            $obj = $this->$_cache = new $classname;
+	            $obj = $this->$_cache = new $className;
 	            $this->$name = json_encode($obj);
 	        }
 	        $obj->attachEventHandler('onchange', array($this, 'onCollectionChange'));
@@ -121,10 +129,12 @@ class PlayerData extends CActiveRecord
 	    return $this->$_cache;
 	}
 
-	/**
-	 *
-	 * @param Collection $res
-	 */
+    /**
+     *
+     * @param Collection $obj
+     * @throws ModelError
+     * @internal param \Collection $res
+     */
 	public function setCollection($obj){
 
 	    $name = strtolower(get_class($obj));

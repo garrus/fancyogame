@@ -55,7 +55,7 @@ class Calculator {
         return array(
             'solar_planet' => 20 * self::level_pow($solar_plant) * (1 + $f['energy_tech'] * 0.03),
             'nuclear_planet' => 30 * self::level_pow($nuclear_plant, 1.2) * $f['nuclear_prod_rate'] * (1 + $f['energy_tech'] * 0.1),
-            'solar_satellite' => 30 * $solar_satellite * (1 + $f['energy_tech'] * 0.04) * $f['planet_temperature'] / 273,
+            'solar_satellite' => 20 * $solar_satellite * (1 + $f['energy_tech'] * 0.04) * $f['planet_temperature'] / 273,
         );
     }
 
@@ -150,7 +150,7 @@ class Calculator {
      */
     public static function construct_rate($robot_factory){
 
-        return round(50000 + 10000 * self::level_pow($robot_factory, 1.3));
+        return round(20000 * (1 + $robot_factory + sqrt($robot_factory + 1)));
     }
 
     /**
@@ -173,6 +173,63 @@ class Calculator {
      */
     public static function research_rate($lab){
 
-        return round(1000 + 3000 * Calculator::level_pow($lab, 1.1));
+        return round(1000 + 3000 * self::level_pow($lab, 1.1));
+    }
+
+    /**
+     * calculate how many pending tasks this planet can manage at most
+     *
+     * @param $computer_center
+     * @return int
+     */
+    public static function max_pending_task_count($computer_center){
+
+        return floor($computer_center / 2);
+    }
+
+    /**
+     * calculate how many fleets this planet can manage at most
+     *
+     * @param int $computer_center
+     * @return mixed
+     */
+    public static function max_fleet_count($computer_center){
+
+        return 1 + $computer_center;
+    }
+
+    /**
+     * calculate how many workflow threads this planet can manage at most
+     *
+     * @param int $computer_center
+     * @param int $robot_factory
+     * @return int
+     */
+    public static function max_workflow_thread_count($computer_center, $robot_factory){
+
+        $count = 1;
+
+        if ($computer_center !=0) {
+            ++$count;
+        } else {
+            return $count;
+        }
+        if ($computer_center > 2 && $robot_factory > 3) {
+            ++$count;
+        } else {
+            return $count;
+        }
+
+        if ($computer_center > 4 && $robot_factory > 7) {
+            ++$count;
+        } else {
+            return $count;
+        }
+
+        if ($computer_center > 7 && $robot_factory > 11) {
+            ++$count;
+        }
+
+        return $count;
     }
 }

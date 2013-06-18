@@ -19,6 +19,7 @@
  *
  * The followings are the available model relations:
  * @property Auction[] $auctions
+ * @property Task[] $tasks
  * @property AuctionItem[] $auctionItems
  * @property Fleet[] $fleets
  * @property Fleet[] $fleets1

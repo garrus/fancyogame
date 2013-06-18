@@ -47,18 +47,17 @@ class Player extends CActiveRecord
 		return 'player';
 	}
 
-
 	protected function afterSave(){
 	    if ($this->isNewRecord) {
 	        $data = new PlayerData;
-	        $data->player_id = $this->id;
+            $data->player_id = $this->id;
 	        if (!$data->save()) {
 	            $this->delete();
 	            throw new ModelError($data);
 	        }
 	        $this->playerData = $data;
 	    }
-	    return parent::afterSave();
+	    parent::afterSave();
 	}
 
 	/**

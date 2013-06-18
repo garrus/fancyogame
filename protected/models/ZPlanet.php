@@ -115,7 +115,7 @@ class ZPlanet extends \Planet {
 
 	        $taskQueue = new TaskQueue($this->tasks, Utils::ensureDateTime($this->planetData->last_update_time));
 
-	        $taskQueue->setLimit($this->getTechs()->getPendingTaskLimit());
+	        $taskQueue->setMaxPendingTaskCount(Calculator::max_pending_task_count($this->buildings->computer_center));
 	        $taskQueue->onTaskDeleted = array($this, 'dropTask');
 	        return $this->_taskQueue = $taskQueue;
     	}
@@ -166,11 +166,9 @@ class ZPlanet extends \Planet {
     	if ($taskQueue->isFull()) {
     	    Yii::app()->user->setFlash('error_task_failed_to_added', 'You have reached your task queue\'s length limit.');
     	    return;
-    	} else {
-    	    Yii::getLogger('Task queue count: '. $taskQueue->count(), ', limit is '. $this->getTechs()->getPendingTaskLimit(), 'warning');
     	}
 
-    	if (TechTree::checkRequirement($this, $type, $target, $amount)) {
+    	if (!TechTree::checkRequirement($this, $type, $target)) {
     	    Yii::app()->user->setFlash('error_task_failed_to_added', 'Tech requirement is not matched.');
     	    return;
     	}
@@ -233,10 +231,11 @@ class ZPlanet extends \Planet {
     public function getWorkflow(){
 
     	if (!$this->_workflow) {
+            $buildings = $this->buildings;
 	    	return $this->_workflow = new Workflow(
 	    	    $this->getTaskQueue(),
 	    	    $this->createTaskExecutorChain(),
-	    	    $this->techs->getMaxWorkingUnit()
+	    	    Calculator::max_workflow_thread_count($buildings->computer_center, $buildings->robot_factory)
 	    	    );
     	}
     	return $this->_workflow;
@@ -265,31 +264,6 @@ class ZPlanet extends \Planet {
         $chain->add(new DefenceExecutor());
 
         return $chain;
-    }
-
-
-    /**
-     *
-     * @param WorkflowTaskEvent $event
-     * @throws Exception
-     */
-    public function taskStageChange($event){
-
-        $this->updateResources($event->datetime);
-
-        $task = $event->task;
-        $trans = self::getDbConnection()->beginTransaction();
-        try {
-            $this->createTaskExecutorChain($task)->run();
-        } catch (Exception $e) {
-            $trans->rollback();
-            throw $e;
-        }
-        if ($task->hasErrors()) {
-            $trans->rollback();
-        } else {
-            $trans->commit();
-        }
     }
 
     /**

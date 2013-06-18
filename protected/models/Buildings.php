@@ -12,6 +12,7 @@
  * @property int $war_academy
  * @property int $robot_factory
  * @property int $nuclear_plant
+ * @property int $computer_center
  *
  * @author user
  */
@@ -35,6 +36,7 @@ class Buildings extends \Collection {
             'war_academy',
             'robot_factory',
             'nuclear_plant',
+            'computer_center',
         );
     }
 
@@ -46,7 +48,7 @@ class Buildings extends \Collection {
      */
     public function getItemConsume($item){
 
-        return self::getItemConsumeOfLevel($item, $this->$item + 1);
+        return self::getItemConsumeOfLevel($item, $this->$item);
     }
 
     /**
@@ -79,6 +81,7 @@ class Buildings extends \Collection {
         'war_academy'     => array('metal' => 1000000, 'crystal' => 500000, 'gas' => 100000, 'energy' => 0, 'factor' => 2),
         'robot_factory'   => array('metal' => 400,     'crystal' => 120,    'gas' => 200,    'energy' => 0, 'factor' => 2),
         'nuclear_plant'   => array('metal' => 900,     'crystal' => 360,    'gas' => 180,    'energy' => 0, 'factor' => 1.8),
+        'computer_center' => array('metal' => 100,     'crystal' => 400,    'gas' => 200,    'energy' => 0, 'factor' => 3),
     );
 
 }

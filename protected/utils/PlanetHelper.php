@@ -79,9 +79,9 @@ class PlanetHelper {
 
         $data = new PlanetData();
         $data->setCollection(Resources::c(array(
-                'metal' => 2000,
-                'crystal' => 1000,
-                'gas' => 500
+                'metal' => 4000,
+                'crystal' => 2000,
+                'gas' => 1000
             ))
         );
         $data->planet_id = $planet->id;

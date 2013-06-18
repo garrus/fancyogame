@@ -35,13 +35,15 @@ class UserIdentity extends CUserIdentity {
         $criteria = new CDbCriteria();
         $criteria->compare('login_name', $this->_username, false, 'OR');
         $criteria->compare('email', $this->_username, false, 'OR');
+
+        /** @var Account $account */
         $account = Account::model()->find($criteria);
         if ($account) {
             if ($account->password == md5($this->_password . $account->salt)) {
 
                 $this->setState('__id', $account->id);
                 $this->setState('__name', $account->login_name);
-                
+
                 if ($account->last_login_ip) {
                     $this->setState('last_login_time', $account->last_login_time);
                     $this->setState('last_login_ip', $account->last_login_ip);

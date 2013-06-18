@@ -18,7 +18,7 @@
  * The followings are the available model relations:
  * @property Player[] $players
  */
-class Account extends CActiveRecord
+class Account extends CActiveRecord implements IUserIdentity
 {
 	/**
 	 * Returns the static model of the specified AR class.
@@ -116,9 +116,15 @@ class Account extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
-	
-	
-	public static function createNew($email, $login_name, $password){
+
+    /**
+     * @param $email
+     * @param $login_name
+     * @param $password
+     * @return Account
+     * @throws ModelError
+     */
+    public static function createNew($email, $login_name, $password){
 		
 		$model = new self;
 		$model->email = $email;
@@ -132,9 +138,14 @@ class Account extends CActiveRecord
 		return $model;
 	}
 
-	
-	public static function updateLoginRecord($id, $login_ip, $login_time=null) {
-		
+    /**
+     * @param $id
+     * @param $login_ip
+     * @param string|null $login_time Y-m-d H:i:s
+     * @throws ModelError
+     */
+    public static function updateLoginRecord($id, $login_ip, $login_time=null) {
+		/** @var Account $model */
 		$model = self::model()->findByPk($id);
 		if ($model) {
 			$model->last_login_time = $login_time ?: new CDbExpression('CURRENT_TIMESTAMP');
@@ -146,4 +157,57 @@ class Account extends CActiveRecord
 		
 	}
 
+    /**
+     * Authenticates the user.
+     * The information needed to authenticate the user
+     * are usually provided in the constructor.
+     * @return boolean whether authentication succeeds.
+     */
+    public function authenticate() {
+
+        return true;
+    }
+
+    /**
+     * Returns a value indicating whether the identity is authenticated.
+     * @return boolean whether the identity is valid.
+     */
+    public function getIsAuthenticated() {
+
+        return true;
+    }
+
+    /**
+     * Returns a value that uniquely represents the identity.
+     * @return mixed a value that uniquely represents the identity (e.g. primary key value).
+     */
+    public function getId() {
+
+        return $this->id;
+    }
+
+    /**
+     * Returns the display name for the identity (e.g. username).
+     * @return string the display name for the identity.
+     */
+    public function getName() {
+
+        return $this->login_name;
+    }
+
+    /**
+     * Returns the additional identity information that needs to be persistent during the user session.
+     * @return array additional identity information that needs to be persistent during the user session (excluding {@link id}).
+     */
+    public function getPersistentStates() {
+
+        if ($this->last_login_time) {
+            return array(
+                'last_login_ip' => $this->last_login_ip,
+                'last_login_time' => $this->last_login_time
+            );
+        } else {
+            return array();
+        }
+    }
 }

@@ -93,9 +93,9 @@ class TaskQueue extends SplQueue {
      * @param int $limit should be an positive integer
      * @throws InvalidArgumentException
      */
-    public function setLimit($limit){
+    public function setMaxPendingTaskCount($limit){
 
-        if (is_numeric($limit) && $limit >= 1) {
+        if (is_numeric($limit) && $limit >= 0) {
             $this->_limit = intval($limit);
         } else {
             throw new InvalidArgumentException('Parameter 1 should be a positive integer.');
@@ -109,7 +109,7 @@ class TaskQueue extends SplQueue {
      */
     public function isFull(){
 
-        return $this->_limit > 0 && $this->_pendingTaskCount >= $this->_limit;
+        return $this->_pendingTaskCount != 0 && $this->_limit != -1 && $this->_pendingTaskCount >= $this->_limit;
     }
 
     /**

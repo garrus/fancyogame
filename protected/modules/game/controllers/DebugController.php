@@ -16,15 +16,19 @@ class DebugController extends GameBaseController {
     public function filters(){
 
         return array_merge(parent::filters(), array(
-            'planetContext',
+            'planetContext - InitMotherPlanet',
         ));
     }
 
-    public function actionInitMotherPlanet(){
+    public function actionResetPlayer(){
 
+        /** @var Player $player */
         $player = Yii::app()->actx->getPlayer();
         foreach ($player->planets as $planet) {
             $planet->delete();
+        }
+        if ($player->playerData) {
+            $player->playerData->regenerate();
         }
         $planet = PlanetHelper::createMotherPlanet($player);
         Yii::app()->actx->switchPlanet($planet);
@@ -34,10 +38,9 @@ class DebugController extends GameBaseController {
 
     public function actionFillResource(){
         $planet = $this->planet;
-        $buildings = $planet->buildings;
         $res = $planet->resources;
 
-        $maxStorage = $buildings->getWarehouseCapacity();
+        $maxStorage = Calculator::resource_capacity($planet->buildings->warehouse);
         $res->add(Resources::c(array(
             'metal' => $maxStorage / 2,
             'crystal' => $maxStorage / 3,

@@ -17,26 +17,13 @@
  * @property int $ionic
  * @property int $buster
  * @property int $intergalactic
- * @property int $expedition
  */
 class Techs extends \Collection {
-
-    public function getPendingTaskLimit(){
-
-        return $this->computer;
-    }
-
-
-    public function getMaxWorkingUnit(){
-
-        return 3;
-    }
 
     public function attributeNames(){
 
         return array(
             'spy',
-            'computer',
             'military',
             'defence',
             'shield',
@@ -49,7 +36,6 @@ class Techs extends \Collection {
             'ionic',
             'buster',
             'intergalactic',
-            'expedition',
         );
     }
 
@@ -60,7 +46,7 @@ class Techs extends \Collection {
      */
     public function getItemConsume($item){
 
-        return self::getItemConsumeOfLevel($item, $this->$item + 1);
+        return self::getItemConsumeOfLevel($item, $this->$item);
     }
 
     /**
@@ -81,7 +67,6 @@ class Techs extends \Collection {
 
     private static $_consumes = array(
         'spy' => array ( 'metal' =>     200, 'crystal' =>    1000, 'gas' =>     200, 'energy' =>    0, 'factor' =>   2),
-        'computer' => array ( 'metal' =>       0, 'crystal' =>     400, 'gas' =>     600, 'energy' =>    0, 'factor' =>   2),
         'military' => array ( 'metal' =>     800, 'crystal' =>     200, 'gas' =>       0, 'energy' =>    0, 'factor' =>   2),
         'defence' => array ( 'metal' =>     200, 'crystal' =>     600, 'gas' =>       0, 'energy' =>    0, 'factor' =>   2),
         'shield' => array ( 'metal' =>    1000, 'crystal' =>       0, 'gas' =>       0, 'energy' =>    0, 'factor' =>   2),
