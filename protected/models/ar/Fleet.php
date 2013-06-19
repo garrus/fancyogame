@@ -22,6 +22,11 @@
  * @property Planet $destinationPlanet
  * @property Player $owner
  * @property RelayAccessHistory[] $relayAccessHistories
+ *
+ * Behavior CollectionAttributeBehavior offers these methods:
+ * @method Collection getCollection(string $name)
+ * @method void setCollection(string $name, Collection $col)
+ *
  */
 class Fleet extends CActiveRecord
 {
@@ -125,4 +130,18 @@ class Fleet extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+    /**
+     * @return array
+     */
+    public function behaviors(){
+        return array(
+            'colAttr' => array(
+                'class' => 'application.components.CollectionAttributeBehavior',
+                'collections' => array(
+                    'ship'   => array('attr' => 'ships', 'class' => 'Ships'),
+                ),
+            )
+        );
+    }
 }

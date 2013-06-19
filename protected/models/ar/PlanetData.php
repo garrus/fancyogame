@@ -16,6 +16,10 @@
  *
  * The followings are the available model relations:
  * @property Planet $planet
+ *
+ * Behavior CollectionAttributeBehavior offers these methods:
+ * @method Collection getCollection(string $name)
+ * @method void setCollection(string $name, Collection $col)
  */
 class PlanetData extends CActiveRecord
 {
@@ -106,7 +110,10 @@ class PlanetData extends CActiveRecord
 		));
 	}
 
-	public function beforeSave(){
+    /**
+     * @return bool
+     */
+    public function beforeSave(){
 
 	    if ($this->isNewRecord) {
 	        $this->resources || $this->resources = '{}';
@@ -114,76 +121,27 @@ class PlanetData extends CActiveRecord
 	        $this->ships || $this->ships = '{}';
 	        $this->defences || $this->defences = '{}';
 	        $this->mines || $this->mines = '{}';
+            $this->debris || $this->debris = '{}';
 	    }
 
 	    return parent::beforeSave();
 	}
 
-	private $_resources=null;
-	private $_buildings=null;
-	private $_ships=null;
-	private $_defences=null;
-	private $_mines=null;
-
-
-	/**
-	 * @param string $name
-     * @return Collection
-     */
-	public function getCollection($name){
-
-	    $_cache = '_'. $name;
-	    if (!$this->$_cache) {
-            /** @var Collection $obj */
-	        $className = ucfirst($name);
-
-	        if ($this->$name) {
-	            $obj = $this->$_cache = $className::fromJson($this->$name);
-	        } else {
-	            $obj = $this->$_cache = new $className;
-	            $this->$name = json_encode($obj);
-	        }
-	        $obj->attachEventHandler('onchange', array($this, 'onCollectionChange'));
-	    }
-	    return $this->$_cache;
-	}
-
     /**
-     *
-     * @param Collection $obj
-     * @throws ModelError
-     * @internal param \Collection $res
+     * @return array
      */
-	public function setCollection($obj){
-
-	    $name = strtolower(get_class($obj));
-	    $this->{'_'. $name} = $obj;
-	    $this->$name = json_encode($obj);
-	    if (!$this->isNewRecord) {
-	        if (!$this->save(true, array($name, 'last_update_time'))) {
-	            throw new ModelError($this);
-	        }
-	    }
-	}
-
-	/**
-	 *
-	 * @param CEvent $event
-	 */
-	public function onCollectionChange($event){
-
-	    $this->setCollection($event->sender);
-	}
-
-	/**
-	 *
-	 * @return Mines
-	 */
-	public function getMines(){
-
-	    return new Mines($this->mines);
-	}
-
-
-
+    public function behaviors(){
+        return array(
+            'colAttr' => array(
+                'class' => 'application.components.CollectionAttributeBehavior',
+                'collections' => array(
+                    'res'   => array('attr' => 'resources', 'class' => 'Resources'),
+                    'bd'    => array('attr' => 'buildings', 'class' => 'Buildings'),
+                    'ship'  => array('attr' => 'ships',     'class' => 'Ships'),
+                    'def'   => array('attr' => 'defences',  'class' => 'Defences'),
+                    'debris'=> array('attr' => 'debris',    'class' => 'Resources'),
+                ),
+            )
+        );
+    }
 }

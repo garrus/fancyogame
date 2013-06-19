@@ -8,11 +8,14 @@
  * @property string $resources
  * @property string $buildings
  * @property string $ships
- * @property string $building_queue
  * @property integer $area
  *
  * The followings are the available model relations:
  * @property Planet $planet
+ *
+ * Behavior CollectionAttributeBehavior offers these methods:
+ * @method Collection getCollection(string $name)
+ * @method void setCollection(string $name, Collection $col)
  */
 class PlanetMoon extends CActiveRecord
 {
@@ -100,4 +103,20 @@ class PlanetMoon extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+    /**
+     * @return array
+     */
+    public function behaviors(){
+        return array(
+            'colAttr' => array(
+                'class' => 'application.components.CollectionAttributeBehavior',
+                'collections' => array(
+                    'res'   => array('attr' => 'resources', 'class' => 'Resources'),
+                    'bd'    => array('attr' => 'buildings', 'class' => 'Buildings'),
+                    'ship'  => array('attr' => 'ships',     'class' => 'Ships'),
+                ),
+            )
+        );
+    }
 }

@@ -45,7 +45,7 @@ class ZPlanet extends \Planet {
      */
     public function getResources(){
 
-        return $this->planetData->getCollection('resources');
+        return $this->planetData->getCollection('res');
     }
 
 
@@ -55,7 +55,7 @@ class ZPlanet extends \Planet {
      */
     public function getShips(){
 
-        return $this->planetData->getCollection('ships');
+        return $this->planetData->getCollection('ship');
     }
 
     /**
@@ -64,7 +64,7 @@ class ZPlanet extends \Planet {
      */
     public function getDefences(){
 
-        return $this->planetData->getCollection('defences');
+        return $this->planetData->getCollection('def');
     }
 
     /**
@@ -73,7 +73,7 @@ class ZPlanet extends \Planet {
      */
     public function getBuildings(){
 
-        return $this->planetData->getCollection('buildings');
+        return $this->planetData->getCollection('bd');
     }
 
     /**
@@ -82,7 +82,7 @@ class ZPlanet extends \Planet {
      */
     public function getMines(){
 
-        return $this->planetData->getMines();
+        return $this->planetData->getCollection('mine');
     }
 
     /**
@@ -91,7 +91,15 @@ class ZPlanet extends \Planet {
      */
     public function getTechs(){
 
-        return $this->owner->playerData->getCollection('techs');
+        return $this->owner->playerData->getCollection('tech');
+    }
+
+    /**
+     * @return Resources
+     */
+    public function getDebris(){
+
+        return $this->planetData->getCollection('debris');
     }
 
 

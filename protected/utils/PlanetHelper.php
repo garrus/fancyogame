@@ -78,7 +78,7 @@ class PlanetHelper {
         $planet->owner = $player;
 
         $data = new PlanetData();
-        $data->setCollection(Resources::c(array(
+        $data->setCollection('res', Resources::c(array(
                 'metal' => 4000,
                 'crystal' => 2000,
                 'gas' => 1000
